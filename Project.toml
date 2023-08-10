@@ -1,0 +1,26 @@
+name = "VectorizedKmers"
+uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
+authors = ["not N/A"]
+version = "1.0.0-DEV"
+
+[deps]
+
+[weakdeps]
+BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+
+[extensions]
+BioSequencesExt = "BioSequences"
+CUDAExt = "CUDA"
+
+[compat]
+julia = "1"
+BioSequences = "3"
+
+[extras]
+BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "BioSequences", "CUDA"]
