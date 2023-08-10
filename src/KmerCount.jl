@@ -5,11 +5,11 @@ abstract type AbstractKmerCount{A, k, T <: Real} <: AbstractVector{T} end
 @inline Base.getindex(kmer_count::AbstractKmerCount, i::Integer) = kmer_count.data[i]
 @inline Base.setindex!(kmer_count::AbstractKmerCount, v::Real, i::Integer) = kmer_count.data[i] = v
 
-struct KmerCount{A, k, T, ArrayType <: AbstractArray} <: AbstractKmerCount{A, k, T}
+struct KmerCount{A, k, T} <: AbstractKmerCount{A, k, T}
     data::AbstractVector{T}
 
     function KmerCount{A, k, T}(data::AbstractVector{T}) where {A, k, T}
-        new{A, k, T, typeof(data)}(data)
+        new{A, k, T}(data)
     end
 
     function KmerCount{A, k, T}() where {A, k, T}
