@@ -24,7 +24,7 @@ function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequence
     seq_len, num_sequences = size(sequences)
     CUDA.fill!(counts, zero(T))
 
-    function kernel(counts, sequences, K, seq_len, num_sequences, masK)
+    function kernel(counts, sequences, K, seq_len, num_sequences, mask)
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
         if seq_idx <= num_sequences
             kmer = unsigned(0)
@@ -45,7 +45,7 @@ function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequence
     threads = 256
     blocks = ceil(Int, num_sequences / threads)
 
-    @cuda threads=threads blocks=blocks kernel(counts, sequences, K, seq_len, num_sequences, masK)
+    @cuda threads=threads blocks=blocks kernel(counts, sequences, K, seq_len, num_sequences, mask)
 
     kmer_count_columns
 end
