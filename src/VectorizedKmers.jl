@@ -1,16 +1,12 @@
 module VectorizedKmers
 
-export
-    # single.jl
-    AbstractKmerCount,
-    KmerCount,
+    export AbstractKmerCount
+    export KmerCount
 
-    # vector.jl
-    AbstractKmerCountVector,
-    KmerCountColumns,
-    KmerCountRows,
+    export AbstractKmerCountVector
+    export KmerCountColumns, KmerCountRows
 
-    count_kmers!
+    export count_kmers!
 
 include("KmerCount.jl")
 include("KmerCountVector.jl")
