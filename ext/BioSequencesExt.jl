@@ -15,7 +15,7 @@ function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bo
             i += 1
             i > len && break # only necessary for the last element in seq.data
             kmer = kmer << 2 & mask + trailing_zeros(data_int >> j) & 0b11
-            counts[kmer + 1] += K <= i # maybe counting ALL k-mers is actually useful though? even incomplete ones that start with some A's
+            counts[kmer + 1] += K <= i
         end
     end
     kmer_count
