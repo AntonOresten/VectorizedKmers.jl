@@ -1,7 +1,7 @@
 @testset "single.jl" begin
 
     @testset "KmerCount" begin
-        @test KmerCount{4, 1, Int}() |> length == 4
+        @test KmerCount{4, 2, Int}() |> length == 16
     end
 
 end
