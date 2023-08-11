@@ -3,10 +3,10 @@ using Test
 
 @testset "VectorizedKmers.jl" begin
 
-    include("KmerCount.jl")
-    include("KmerCountVector.jl")
+    include("kmer_count.jl")
+    include("kmer_count_vec.jl")
 
-    @testset "ext" begin
+    @testset "extensions" begin
         include("ext/BioSequencesExt.jl")
         include("ext/CUDAExt.jl")
     end

@@ -8,7 +8,7 @@ module VectorizedKmers
 
     export count_kmers!
 
-include("KmerCount.jl")
-include("KmerCountVector.jl")
+include("kmer_count.jl")
+include("kmer_count_vec.jl")
 
 end
