@@ -13,39 +13,46 @@ import VectorizedKmers: KmerCount, count_kmers!, KmerCountColumns, KmerCountRows
 """
     count_kmers!(kcc::KmerCountColumns{4, K, T, CuMatrix{T}}, sequences::CuMatrix{UInt8})
 
-Turbocharged K-mer counting powered by CUDA. DNA sequences (all with same length) are stored in the columns of `sequences`.
+Turbocharged K-mer counting powered by CUDA. DNA sequences (must have same length) are stored in the columns of `sequences`.
 Values in `sequences` must be between 0 and 3.
 
 Chars 'A', 'C', 'G', and 'T' can be converted to 0, 1, 3, and 2 respectively using the function:
-`char -> UInt8(char) >> 1 & 0x03`
+`char -> UInt8(char) >> 1 & 0x03`, or `byte -> byte >> 1 & 0x03`,
+which is easy to broadcast to an array of bytes.
 """
 function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequences::CuMatrix{UInt8}) where {K, T, M <: CuMatrix{T}}
     counts = kmer_count_columns.counts
     seq_len, num_sequences = size(sequences)
     CUDA.fill!(counts, zero(T))
 
-    function kernel(counts, sequences, K, seq_len, num_sequences, mask)
+    function count_kmers_column!(counts, sequences, K, seq_len, num_sequences, mask)
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
-        if seq_idx <= num_sequences
-            kmer = unsigned(0)
+
+        @inbounds if seq_idx <= num_sequences
+            kmer_count = view(counts, :, seq_idx)
+            sequence = view(sequences, :, seq_idx)
+
+            kmer = zero(UInt64)
             for i in 1:K-1
-                base = sequences[i, seq_idx]
-                kmer = kmer << 2 + base
+                base = sequence[i]
+                kmer = (kmer << 2) + base
             end
+
             for i in K:seq_len
-                base = sequences[i, seq_idx]
-                kmer = kmer << 2 & mask + base
-                CUDA.@atomic counts[kmer + 1, seq_idx] += one(T)
+                base = sequence[i]
+                kmer = ((kmer << 2) & mask) + base
+                kmer_count[kmer + 1] += one(T)
             end
         end
-        return
+
+        return nothing
     end
 
-    mask = unsigned(4^k - 1)
+    mask = unsigned(4^K - 1)
     threads = 256
     blocks = ceil(Int, num_sequences / threads)
 
-    @cuda threads=threads blocks=blocks kernel(counts, sequences, K, seq_len, num_sequences, mask)
+    @cuda threads=threads blocks=blocks count_kmers_column!(counts, sequences, K, seq_len, num_sequences, mask)
 
     kmer_count_columns
 end
