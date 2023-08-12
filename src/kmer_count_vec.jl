@@ -14,10 +14,6 @@ struct KmerCountColumns{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
         @assert size(counts, 1) == A^K
         new{A, K, T, M}(counts)
     end
-
-    function KmerCountColumns(kcc::KmerCountRows{A, K, T}) where {A, K, T}
-        KmerCountColumns{A, K, T}(transpose(kcc.counts))
-    end
 end
 
 @inline Base.size(kmer_count::KmerCountColumns) = (size(kmer_count.counts, 2),)
@@ -34,15 +30,19 @@ struct KmerCountRows{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
         @assert size(counts, 2) == A^K
         new{A, K, T, M}(counts)
     end
-
-    function KmerCountRows(kcc::KmerCountColumns{A, K, T}) where {A, K, T}
-        KmerCountRows{A, K, T}(transpose(kcc.counts))
-    end
 end
 
 @inline Base.size(kmer_count::KmerCountRows) = (size(kmer_count.counts, 1),)
 @inline Base.length(kmer_count::KmerCountRows) = size(kmer_count.counts, 1)
 @inline Base.getindex(kmer_count::KmerCountRows{A, K, T}, i::Integer) where {A, K, T} = KmerCount{A, K, T}(view(kmer_count.counts, i, :))
+
+function KmerCountColumns(kcc::KmerCountRows{A, K, T}) where {A, K, T}
+    KmerCountColumns{A, K, T}(transpose(kcc.counts))
+end
+
+function KmerCountRows(kcc::KmerCountColumns{A, K, T}) where {A, K, T}
+    KmerCountRows{A, K, T}(transpose(kcc.counts))
+end
 
 Base.transpose(kcc::KmerCountColumns) = KmerCountRows(kcc)
 Base.transpose(kcr::KmerCountRows) = KmerCountColumns(kcr)
