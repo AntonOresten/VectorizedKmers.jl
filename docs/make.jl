@@ -17,7 +17,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
     ],
-    checkdocs = :all
+    checkdocs = :all,
 )
 
 deploydocs(;
