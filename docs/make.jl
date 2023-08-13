@@ -23,5 +23,5 @@ deploydocs(;
     branch = "gh-pages",
     devbranch = "dev",
     deps = nothing,
-    make = nothing
+    make = nothing,
 )
