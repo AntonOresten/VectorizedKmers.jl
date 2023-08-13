@@ -18,10 +18,9 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "github.com/anton083/VectorizedKmers.jl",
+    repo = "github.com/anton083/VectorizedKmers.jl.git",
     push_preview = true,
-    branch = "gh-pages",
-    devbranch = "dev",
+    devbranch = "main",
     deps = nothing,
-    make = nothing
+    make = nothing,
 )
