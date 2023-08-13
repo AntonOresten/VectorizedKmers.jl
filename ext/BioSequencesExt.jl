@@ -21,4 +21,14 @@ function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bo
     kmer_count
 end
 
+function count_kmers(
+    ::KmerCount{4, K, T},
+    seq::LongDNA{4};
+    zeros_func::Function = zeros
+) where {K, T}
+    kmer_count = KmerCount{4, K, T}(zeros_func)
+    count_kmers!(kmer_count, seq, reset=false)
+    kmer_count
+end
+
 end
