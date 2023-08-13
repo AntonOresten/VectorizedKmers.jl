@@ -5,18 +5,15 @@ DocMeta.setdocmeta!(VectorizedKmers, :DocTestSetup, :(using VectorizedKmers); re
 
 makedocs(;
     modules = [VectorizedKmers],
-    authors = "Anton O. Sollman",
-    repo = "https://github.com/anton083/VectorizedKmers.jl/blob/{commit}{path}#{line}",
-    sitename = "VectorizedKmers.jl",
-    doctest = true,
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", "false") == "true",
-        edit_link = "main",
-        assets = String[],
     ),
+    sitename = "VectorizedKmers.jl",
+    doctest = true,
     pages = [
         "Home" => "index.md",
     ],
+    authors = "Anton O. Sollman",
     checkdocs = :all,
 )
 
