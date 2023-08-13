@@ -12,6 +12,7 @@ makedocs(;
     doctest = true,
     pages = [
         "Home" => "index.md",
+        "The KmerCount type" => "kmer_count.md",
     ],
     authors = "Anton O. Sollman",
     checkdocs = :all,
