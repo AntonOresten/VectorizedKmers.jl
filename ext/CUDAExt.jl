@@ -21,15 +21,15 @@ Chars 'A', 'C', 'G', and 'T' can be converted to 0, 1, 3, and 2 respectively usi
 which is easy to broadcast to an array of bytes.
 """
 function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequences::CuMatrix{UInt8}) where {K, T, M <: CuMatrix{T}}
-    counts = kmer_count_columns.counts
+    count_matrix = kmer_count_columns.counts
     seq_len, num_sequences = size(sequences)
-    CUDA.fill!(counts, zero(T))
+    CUDA.fill!(count_matrix, zero(T))
 
-    function count_kmers_column!(counts, sequences, K, seq_len, num_sequences, mask)
+    function count_kmers_column!(count_matrix, sequences, K, seq_len, num_sequences, mask)
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
 
         @inbounds if seq_idx <= num_sequences
-            kmer_count = view(counts, :, seq_idx)
+            count_vector = view(count_matrix, :, seq_idx)
             sequence = view(sequences, :, seq_idx)
 
             kmer = zero(UInt64)
@@ -41,7 +41,7 @@ function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequence
             for i in K:seq_len
                 base = sequence[i]
                 kmer = ((kmer << 2) & mask) + base
-                kmer_count[kmer + 1] += one(T)
+                count_vector[kmer + 1] += one(T)
             end
         end
 
@@ -52,7 +52,7 @@ function count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequence
     threads = 256
     blocks = ceil(Int, num_sequences / threads)
 
-    @cuda threads=threads blocks=blocks count_kmers_column!(counts, sequences, K, seq_len, num_sequences, mask)
+    @cuda threads=threads blocks=blocks count_kmers_column!(count_matrix, sequences, K, seq_len, num_sequences, mask)
 
     kmer_count_columns
 end

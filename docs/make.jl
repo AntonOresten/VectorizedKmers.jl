@@ -12,6 +12,7 @@ makedocs(;
     doctest = true,
     pages = [
         "Home" => "index.md",
+        "The KmerCount type" => "kmer_count.md",
     ],
     authors = "Anton O. Sollman",
     checkdocs = :all,
@@ -20,7 +21,7 @@ makedocs(;
 deploydocs(;
     repo = "github.com/anton083/VectorizedKmers.jl.git",
     push_preview = true,
-    devbranch = "main",
+    devbranch = "dev",
     deps = nothing,
     make = nothing,
 )
