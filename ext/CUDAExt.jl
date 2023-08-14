@@ -20,10 +20,14 @@ Chars 'A', 'C', 'G', and 'T' can be converted to 0, 1, 3, and 2 respectively usi
 `char -> UInt8(char) >> 1 & 0x03`, or `byte -> byte >> 1 & 0x03`,
 which is easy to broadcast to an array of bytes.
 """
-function VectorizedKmers.count_kmers!(kmer_count_columns::KmerCountColumns{4, K, T, M}, sequences::CuMatrix{UInt8}) where {K, T, M <: CuMatrix{T}}
+function VectorizedKmers.count_kmers!(
+    kmer_count_columns::KmerCountColumns{4, K, T, M},
+    sequences::CuMatrix{UInt8};
+    reset::Bool = true,
+) where {K, T, M <: CuMatrix{T}}
     count_matrix = kmer_count_columns.counts
     seq_len, num_sequences = size(sequences)
-    CUDA.fill!(count_matrix, zero(T))
+    reset && CUDA.fill!(count_matrix, 0)
 
     function count_kmers_column!(count_matrix, sequences, K, seq_len, num_sequences, mask)
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
