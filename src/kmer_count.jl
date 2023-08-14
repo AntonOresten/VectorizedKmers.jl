@@ -14,6 +14,7 @@ abstract type AbstractKmerCount{A, K, T <: Real, V <: AbstractVector{T}} <: Abst
 @inline Base.getindex(kmer_count::AbstractKmerCount, i::Integer) = kmer_count.counts[i]
 @inline Base.setindex!(kmer_count::AbstractKmerCount, v::Real, i::Integer) = kmer_count.counts[i] = v
 @inline Base.eltype(::AbstractKmerCount{A, K, T}) where {A, K, T} = T
+@inline reset!(kmer_count::AbstractKmerCount) = fill!(kmer_count.counts, 0)
 
 """
     KmerCount{A, K, T, V} <: AbstractKmerCount{A, K, T, V}
@@ -48,7 +49,7 @@ function count_kmers!(
     kmers::Vector{<:Integer};
     reset::Bool = true,
 ) where {A, K, T}
-    reset && fill!(kmer_count.counts, zero(T))
+    reset && reset!(kmer_count)
     for kmer in kmers
         kmer_count[kmer + 1] += 1
     end
@@ -58,7 +59,7 @@ end
     Ideally the K-mers would be procedurally calculated in constant memory. =#
 
 """
-    count_kmers(KmerCount{A, K, T}, kmers; zeros_func=zeros, reset=true)
+    count_kmers(KmerCount{A, K, T}, kmers; zeros_func=zeros)
 
 Create a new A^K sized vector using `zeros_func` and count the K-mers in `kmers`.
 The K-mers in `kmers` must be represented as integers between `0` and `length(kmer_count) - 1`.
@@ -66,7 +67,7 @@ The K-mers in `kmers` must be represented as integers between `0` and `length(km
 If `reset` is `true`, the `counts` vector will be zero-ed before counting.
 """
 function count_kmers(
-    ::KmerCount{A, K, T}, kmers::Vector{<:Integer};
+    ::Type{KmerCount{A, K, T}}, kmers::Vector{<:Integer};
     zeros_func::Function = zeros,
 ) where {A, K, T}
     kmer_count = KmerCount{A, K, T}(zeros_func)

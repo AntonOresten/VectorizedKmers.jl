@@ -2,9 +2,13 @@ module BioSequencesExt
  
 using VectorizedKmers, BioSequences
 
-function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bool=true) where {K, T}
+function VectorizedKmers.count_kmers!(
+    kmer_count::KmerCount{4, K, T},
+    seq::LongDNA{4};
+    reset::Bool = true,
+) where {K, T}
     counts = kmer_count.counts
-    reset && fill!(kmer_count, zero(T))
+    reset && reset!(kmer_count)
     len = length(seq)
     mask = UInt(1) << 2K - 1
     kmer = UInt(0)
@@ -21,9 +25,9 @@ function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bo
 end
 
 function VectorizedKmers.count_kmers(
-    ::KmerCount{4, K, T},
+    ::Type{KmerCount{4, K, T}},
     seq::LongDNA{4};
-    zeros_func::Function = zeros
+    zeros_func::Function = zeros,
 ) where {K, T}
     kmer_count = KmerCount{4, K, T}(zeros_func)
     count_kmers!(kmer_count, seq, reset=false)
