@@ -13,7 +13,7 @@ abstract type AbstractKmerCount{A, K, T <: Real, V <: AbstractVector{T}} <: Abst
 @inline Base.length(kmer_count::AbstractKmerCount) = length(kmer_count.counts)
 @inline Base.getindex(kmer_count::AbstractKmerCount, i::Integer) = kmer_count.counts[i]
 @inline Base.setindex!(kmer_count::AbstractKmerCount, v::Real, i::Integer) = kmer_count.counts[i] = v
-@inline Base.reset(kmer_count::AbstractKmerCount) = fill!(kmer_count.counts, 0)
+@inline Base.reset!(kmer_count::AbstractKmerCount) = fill!(kmer_count.counts, 0)
 @inline Base.eltype(::AbstractKmerCount{A, K, T}) where {A, K, T} = T
 
 """
@@ -49,7 +49,7 @@ function count_kmers!(
     kmers::Vector{<:Integer};
     reset::Bool = true,
 ) where {A, K, T}
-    reset && reset(kmer_count)
+    reset && reset!(kmer_count)
     for kmer in kmers
         kmer_count[kmer + 1] += 1
     end
@@ -59,7 +59,7 @@ end
     Ideally the K-mers would be procedurally calculated in constant memory. =#
 
 """
-    count_kmers(KmerCount{A, K, T}, kmers; zeros_func=zeros, reset=true)
+    count_kmers(KmerCount{A, K, T}, kmers; zeros_func=zeros)
 
 Create a new A^K sized vector using `zeros_func` and count the K-mers in `kmers`.
 The K-mers in `kmers` must be represented as integers between `0` and `length(kmer_count) - 1`.

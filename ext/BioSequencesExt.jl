@@ -8,7 +8,7 @@ function VectorizedKmers.count_kmers!(
     reset::Bool = true,
 ) where {K, T}
     counts = kmer_count.counts
-    reset && reset(kmer_count)
+    reset && reset!(kmer_count)
     len = length(seq)
     mask = UInt(1) << 2K - 1
     kmer = UInt(0)
