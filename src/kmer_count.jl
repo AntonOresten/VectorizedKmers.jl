@@ -24,6 +24,7 @@ struct KmerCount{A, K, T, V} <: AbstractKmerCount{A, K, T, V}
     counts::V
 
     function KmerCount{A, K}(counts::V) where {A, K, T <: Real, V <: AbstractVector{T}}
+        @assert length(counts) == A^K
         new{A, K, T, V}(counts)
     end
 
