@@ -14,6 +14,8 @@ abstract type AbstractKmerCount{A, K, T <: Real, V <: AbstractVector{T}} <: Abst
 @inline Base.getindex(kmer_count::AbstractKmerCount, i::Integer) = kmer_count.counts[i]
 @inline Base.setindex!(kmer_count::AbstractKmerCount, v::Real, i::Integer) = kmer_count.counts[i] = v
 @inline Base.eltype(::AbstractKmerCount{A, K, T}) where {A, K, T} = T
+@inline get_A(::AbstractKmerCount{A}) where A = A
+@inline get_K(::AbstractKmerCount{A, K}) where {A, K} = K
 @inline reset!(kmer_count::AbstractKmerCount) = fill!(kmer_count.counts, 0)
 
 """
