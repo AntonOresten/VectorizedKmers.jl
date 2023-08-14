@@ -1,7 +1,6 @@
 module BioSequencesExt
  
 using VectorizedKmers, BioSequences
-import VectorizedKmers: KmerCount, count_kmers!, KmerCountColumns, KmerCountRows
 
 function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bool=true) where {K, T}
     counts = kmer_count.counts
@@ -21,7 +20,7 @@ function count_kmers!(kmer_count::KmerCount{4, K, T}, seq::LongDNA{4}; reset::Bo
     kmer_count
 end
 
-function count_kmers(
+function VectorizedKmers.count_kmers(
     ::KmerCount{4, K, T},
     seq::LongDNA{4};
     zeros_func::Function = zeros
