@@ -49,7 +49,9 @@ julia> kc1 = count_kmers(KmerCount{4, 1, Int64}, [2, 0, 3, 3, 0, 1, 0])
 
 This default method is supposed to be as generic as possible, which is why it takes the K-mers in the form of integers already, but that's not very efficient, since that whole array would have to be allocated. Ideally, K-mers would be procedurally generated in constant memory, as is the case for the `KmerCount(::LongDNA, ::Integer)` method.
 
-To reiterate, the default `count_kmers` takes a type as its first argument so that it can create a new instance of that type, along with a vector of zeros. The `count_kmers!` method, on the other hand, takes an instance of `KmerCount` as its first argument, and modifies it in-place, which is more flexible, as you can use any vector type you want, such as a `SparseVector`:
+To reiterate, the default `count_kmers` method takes a type as its first argument so that it can create a new instance of that type, which includes creating a new vector of zeros. The `count_kmers!` method on the other hand, takes an instance of `KmerCount` as its first argument, and modifies it in-place, which is more flexible.
+
+Let's create a `KmerCount` instance with `SparseVector` as its vector type. We can do this by passing `spzeros` to the `KmerCount{A, K, T}` constructor (it's just `zeros` by default):
 
 ```jldoctest
 julia> using SparseArrays
