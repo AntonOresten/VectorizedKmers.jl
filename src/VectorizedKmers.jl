@@ -1,6 +1,5 @@
 module VectorizedKmers
 
-    export AbstractKmerCount
     export KmerCount
 
     export AbstractKmerCountVector

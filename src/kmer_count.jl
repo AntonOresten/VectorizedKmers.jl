@@ -1,42 +1,48 @@
 """
-    AbstractKmerCount{A, K, T <: Real, V <: AbstractVector{T}}
+    KmerCount{A, K, T, V}
 
-Abstract type for K-mer counts.
 `A` is the alphabet size,
 `K` is the K-mer size,
 and `T` is the element type of the underlying `counts` field,
-which in turn has type `V{T}`.
+which in turn has type `V`.
 """
-abstract type AbstractKmerCount{A, K, T <: Real, V <: AbstractVector{T}} <: AbstractVector{T} end
-
-@inline Base.size(kmer_count::AbstractKmerCount) = size(kmer_count.counts)
-@inline Base.length(kmer_count::AbstractKmerCount) = length(kmer_count.counts)
-@inline Base.getindex(kmer_count::AbstractKmerCount, i::Integer) = kmer_count.counts[i]
-@inline Base.setindex!(kmer_count::AbstractKmerCount, v::Real, i::Integer) = kmer_count.counts[i] = v
-@inline Base.eltype(::AbstractKmerCount{A, K, T}) where {A, K, T} = T
-@inline get_A(::AbstractKmerCount{A}) where A = A
-@inline get_K(::AbstractKmerCount{A, K}) where {A, K} = K
-@inline reset!(kmer_count::AbstractKmerCount) = fill!(kmer_count.counts, 0)
-
-"""
-    KmerCount{A, K, T, V} <: AbstractKmerCount{A, K, T, V}
-
-A concrete type for K-mer counts with vector type `V` and element type `T`.
-"""
-struct KmerCount{A, K, T, V} <: AbstractKmerCount{A, K, T, V}
+struct KmerCount{A, K, T <: Real, V <: AbstractVector{T}} <: AbstractVector{T}
     counts::V
 
-    function KmerCount{A, K}(counts::V) where {A, K, T <: Real, V <: AbstractVector{T}}
+    function KmerCount{A, K, T, V}(counts::V) where {A, K, T, V}
         @assert length(counts) == A^K
         new{A, K, T, V}(counts)
+    end
+
+    function KmerCount{A, K}(counts::V) where {A, K, T <: Real, V <: AbstractVector{T}}
+        KmerCount{A, K, T, V}(counts)
     end
 
     function KmerCount{A, K, T}(zeros_func::Function = zeros) where {A, K, T}
         KmerCount{A, K}(zeros_func(T, A^K))
     end
+
+    function KmerCount{A, K}(zeros_func::Function = zeros) where {A, K}
+        KmerCount{A, K, Int}(zeros_func)
+    end
 end
 
-KmerCount{A, K}(zf::Function = zeros) where {A, K} = KmerCount{A, K, Int}(zf)
+@inline Base.size(kmer_count::KmerCount) = size(kmer_count.counts)
+@inline Base.length(kmer_count::KmerCount) = length(kmer_count.counts)
+@inline Base.getindex(kmer_count::KmerCount, i::Integer) = kmer_count.counts[i]
+@inline Base.setindex!(kmer_count::KmerCount, v::Real, i::Integer) = kmer_count.counts[i] = v
+@inline Base.eltype(::KmerCount{A, K, T}) where {A, K, T} = T
+@inline get_A(::KmerCount{A}) where A = A
+@inline get_K(::KmerCount{A, K}) where {A, K} = K
+@inline reset!(kmer_count::KmerCount) = fill!(kmer_count.counts, 0)
+
+function Base.summary(kc::KmerCount)
+    string(typeof(kc))
+end
+
+function Base.show(io::IO, kc::KmerCount)
+    print(io, summary(kc)*"($(kc.counts))")
+end
 
 """
     count_kmers!(kmer_count, kmers; reset=true)
@@ -47,10 +53,10 @@ The K-mers in `kmers` must be represented as integers between 0 and length(kmer_
 If `reset` is `true`, the `counts` vector will be zero-ed before counting.
 """
 function count_kmers!(
-    kmer_count::KmerCount{A, K, T},
+    kmer_count::KmerCount,
     kmers::Vector{<:Integer};
     reset::Bool = true,
-) where {A, K, T}
+)
     reset && reset!(kmer_count)
     for kmer in kmers
         kmer_count[kmer + 1] += 1
@@ -74,5 +80,5 @@ function count_kmers(
 ) where {A, K, T}
     kmer_count = KmerCount{A, K, T}(zeros_func)
     count_kmers!(kmer_count, kmers, reset=false)
-    kmer_count
+    return kmer_count
 end
