@@ -5,29 +5,69 @@ DocTestSetup = quote
 end
 ```
 
-# The `KmerCount` type
+# Counting K-mers with the `KmerCount` type
 
 The `KmerCount` type has four type parameters, but you only really need to care about the first two: `A`, the alphabet size, and `K`, the K-mer length. So, to count the 6-mers of a DNA sequence, you would use `KmerCount{4, 6}`. For each of these K-mer counts, memory for a vector of size `A^K` is allocated, unless a vector type like `SparseVector` is used. This brings us to the two other type parameters: `T`, which is the vector element type, and `V`, which is the type of the actual vector.
 
-Let's see it in action:
+Let's see it in action! Here we import `BioSequences` to unlock a method of `count_kmers` that works on the `LongDNA` type. In this example, we count the 1-mers of the sequence `GATTACA`. The result is a `KmerCount{4, 1, Int64, Vector{Int64}}`, which is a vector of 4 `Int64` elements.
 
 ```jldoctest
-julia> kc = KmerCount{4, 2}(); # creates a Vector{Int} of zeros with length 4^2
+julia> using BioSequences
 
-julia> using BioSequences # a weak dependency that lets us count kmers of LongDNA{4} sequences
+julia> count_kmers(dna"GATTACA", 1)
+4-element KmerCount{4, 1, Int64, Vector{Int64}}:
+ 3
+ 1
+ 1
+ 2
+```
 
-julia> count_kmers!(kc, dna"ACGT"); # AC is 0001, CG is 0110, GT is 1011
+We can also set the element type to `UInt16` to save memory, at the cost of a smaller maximum count value.
 
-julia> @show kc; # indices offset by 1. thanks julia...
-kc = [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+```jldoctest
+julia> count_kmers(dna"GATTACA", 1, UInt16)
+4-element KmerCount{4, 1, UInt16, Vector{UInt16}}:
+ 0x0003
+ 0x0001
+ 0x0001
+ 0x0002
+```
 
-julia> count_kmers!(kc, dna"ACGT"); # count again
+!!! note
+    Be careful when using element types with fewer bits, such as `UInt16`. Even though you might not expect any one k-mer to occur more than 65,535 times, some vector operations such as `LinearAlgebra.dot` and `Distances.sqeuclidean` will still use `UInt16` when summing up terms, which might lead to integer overflow.
 
-julia> @show kc; # the vector gets reset to zeros before counting again
-kc = [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+The default `count_kmers` method is a bit different. Under the hood, it uses `count_kmers!` to modify a KmerCount instance in-place. This is useful when you want to count k-mers in a sequence without allocating a new vector. `count_kmers` doesn't modify a vector though, so it needs to create a new instance of a given type:
 
-julia> count_kmers!(kc, dna"ACGT", reset=false); # avoid reset with reset=false
+```jldoctest
+julia> kc1 = count_kmers(KmerCount{4, 1, Int64}, [2, 0, 3, 3, 0, 1, 0])
+4-element KmerCount{4, 1, Int64, Vector{Int64}}:
+ 3
+ 1
+ 1
+ 2
+```
 
-julia> @show kc; # look! we counted 2-mers of ACGT twice
-kc = [0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0]
+This default method is supposed to be as generic as possible, which is why it takes the K-mers in the form of integers already, but that's not very efficient, since that whole array would have to be allocated. Ideally, K-mers would be procedurally generated in constant memory, as is the case for the `KmerCount(::LongDNA, ::Integer)` method.
+
+To reiterate, the default `count_kmers` takes a type as its first argument so that it can create a new instance of that type, along with a vector of zeros. The `count_kmers!` method, on the other hand, takes an instance of `KmerCount` as its first argument, and modifies it in-place, which is more flexible, as you can use any vector type you want, such as a `SparseVector`:
+
+```jldoctest
+julia> using SparseArrays
+
+julia> kc2 = KmerCount{4, 1, Int64}(spzeros)
+4-element KmerCount{4, 1, Int64, SparseVector{Int64, Int64}}:
+ 0
+ 0
+ 0
+ 0
+
+julia> count_kmers!(kc2, [2, 0, 3, 3, 0, 1, 0])
+4-element KmerCount{4, 1, Int64, SparseVector{Int64, Int64}}:
+ 3
+ 1
+ 1
+ 2
+
+julia> kc1 == kc2
+true
 ```
