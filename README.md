@@ -1,4 +1,4 @@
-# VectorizedKmers
+# <img width="25%" src="./docs/src/assets/logo.png" align="right" /> VectorizedKmers
 
 [![Latest Release](https://img.shields.io/github/release/anton083/VectorizedKmers.jl.svg)](https://github.com/anton083/VectorizedKmers.jl/releases/latest)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/license/MIT)
