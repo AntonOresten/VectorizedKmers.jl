@@ -49,7 +49,7 @@ function VectorizedKmers.count_kmers!(
             end
         end
 
-        return nothing
+        nothing
     end
 
     mask = unsigned(4^K - 1)
