@@ -1,4 +1,4 @@
-# Integer representation of k-mers
+# Integer representation of K-mers
 
 This package relies on representing K-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
 
@@ -44,7 +44,7 @@ f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]
 !!! note
     Strings are bad! Don't use strings! Please! They're bad! Very bad! Chars have variable length when part of Strings in Julia, so indexing and taking lengths and stuff is kinda slow! Don't use strings! Again: very bad! Use something like LongDNA{4}, please!
 
-This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each k-mer individually, instead of having some kind of sliding window. Moreover, the function takes the k-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
+This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each K-mer individually, instead of having some kind of sliding window. Moreover, the function takes the K-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
 
 ```jldoctest
 julia> kmer_to_int("GATTACA")

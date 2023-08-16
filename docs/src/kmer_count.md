@@ -34,9 +34,9 @@ julia> count_kmers(dna"GATTACA", 1, UInt16)
 ```
 
 !!! note
-    Be careful when using element types with fewer bits, such as `UInt16`. Even though you might not expect any one k-mer to occur more than 65,535 times, some vector operations such as `LinearAlgebra.dot` and `Distances.sqeuclidean` will still use `UInt16` when summing up terms, which might lead to integer overflow.
+    Be careful when using element types with fewer bits, such as `UInt16`. Even though you might not expect any one K-mer to occur more than 65,535 times, some vector operations such as `LinearAlgebra.dot` and `Distances.sqeuclidean` will still use `UInt16` when summing up terms, which might lead to integer overflow.
 
-The default `count_kmers` method is a bit different. Under the hood, it uses `count_kmers!` to modify a KmerCount instance in-place. This is useful when you want to count k-mers in a sequence without allocating a new vector. `count_kmers` doesn't modify a vector though, so it needs to create a new instance of a given type:
+The default `count_kmers` method is a bit different. Under the hood, it uses `count_kmers!` to modify a KmerCount instance in-place. This is useful when you want to count K-mers in a sequence without allocating a new vector. `count_kmers` doesn't modify a vector though, so it needs to create a new instance of a given type:
 
 ```jldoctest
 julia> kc1 = count_kmers(KmerCount{4, 1, Int64}, [2, 0, 3, 3, 0, 1, 0])
