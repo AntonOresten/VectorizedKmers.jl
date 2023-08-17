@@ -35,12 +35,12 @@ function VectorizedKmers.count_kmers!(
             kmer = zero(UInt64)
             for i in 1:k-1
                 base = sequence[i]
-                kmer = (kmer << 2) + base
+                kmer = (kmer << 2) | base
             end
 
             for i in k:seq_len
                 base = sequence[i]
-                kmer = ((kmer << 2) & mask) + base
+                kmer = ((kmer << 2) & mask) | base
                 count_vector[kmer + 1] += one(T)
             end
         end
