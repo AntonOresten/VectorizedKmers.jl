@@ -53,10 +53,11 @@ The k-mers in `kmers` must be represented as integers between 0 and length(kmer_
 If `reset` is `true`, the `counts` vector will be zero-ed before counting.
 """
 function count_kmers!(
-    kmer_count::KmerCount,
+    kmer_count::KmerCount{A, k},
     kmers::Vector{<:Integer};
     reset::Bool = true,
-)
+) where {A, k}
+    @assert maximum(kmers) < A^k
     reset && reset!(kmer_count)
     for kmer in kmers
         kmer_count[kmer + 1] += 1
