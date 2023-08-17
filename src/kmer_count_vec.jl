@@ -1,66 +1,66 @@
 """
-    AbstractKmerCountVector{A, K, T <: Real, M <: AbstractMatrix{T}} <: AbstractVector{KmerCount{A, K, T, V} where {V <: AbstractVector{T}}}
+    AbstractKmerCountVector{A, k, T <: Real, M <: AbstractMatrix{T}} <: AbstractVector{KmerCount{A, k, T, V} where {V <: AbstractVector{T}}}
 
 Yup... that's indeed an abomination of a type.
-A container for K-mer counts, where K-mer counts are stored together as rows or columns in a matrix.
-`A` is the alphabet size, `K` is the K-mer size, `T` is the element type of the counts,
-and `M` is the type of the matrix in which the K-mer counts are stored.
+A container for k-mer counts, where k-mer counts are stored together as rows or columns in a matrix.
+`A` is the alphabet size, `k` is the k-mer size, `T` is the element type of the counts,
+and `M` is the type of the matrix in which the k-mer counts are stored.
 """
-abstract type AbstractKmerCountVector{A, K, T <: Real, M <: AbstractMatrix{T}} <: AbstractVector{KmerCount{A, K, T, V} where {V <: AbstractVector{T}}}  end
+abstract type AbstractKmerCountVector{A, k, T <: Real, M <: AbstractMatrix{T}} <: AbstractVector{KmerCount{A, k, T, V} where {V <: AbstractVector{T}}}  end
 
 
 """
-    KmerCountColumns{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
+    KmerCountColumns{A, k, T, M} <: AbstractKmerCountVector{A, k, T, M}
 
-A container for K-mer counts, where K-mer counts are stored together as columns in a matrix.
-This is more efficient than storing K-mer counts as rows in a matrix, since the elements in a column are contiguous in memory.
+A container for k-mer counts, where k-mer counts are stored together as columns in a matrix.
+This is more efficient than storing k-mer counts as rows in a matrix, since the elements in a column are contiguous in memory.
 """
-struct KmerCountColumns{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
+struct KmerCountColumns{A, k, T, M} <: AbstractKmerCountVector{A, k, T, M}
     counts::M
 
-    function KmerCountColumns{A, K}(counts::M) where {A, K, T <: Real, M <: AbstractMatrix{T}}
-        @assert size(counts, 1) == A^K
-        new{A, K, T, M}(counts)
+    function KmerCountColumns{A, k}(counts::M) where {A, k, T <: Real, M <: AbstractMatrix{T}}
+        @assert size(counts, 1) == A^k
+        new{A, k, T, M}(counts)
     end
 end
 
 @inline Base.size(kmer_count::KmerCountColumns) = (size(kmer_count.counts, 2),)
 @inline Base.length(kmer_count::KmerCountColumns) = size(kmer_count.counts, 2)
 
-@inline function Base.getindex(kmer_count::KmerCountColumns{A, K}, i::Integer) where {A, K}
-    KmerCount{A, K}(view(kmer_count.counts, :, i))
+@inline function Base.getindex(kmer_count::KmerCountColumns{A, k}, i::Integer) where {A, k}
+    KmerCount{A, k}(view(kmer_count.counts, :, i))
 end
 
 
 """
-    KmerCountRows{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
+    KmerCountRows{A, k, T, M} <: AbstractKmerCountVector{A, k, T, M}
 
-A container for K-mer counts, where K-mer counts are stored together as rows in a matrix.
-This is not as efficient as storing K-mer counts as columns in a matrix, since the elements in a row are not contiguous in memory.
+A container for k-mer counts, where k-mer counts are stored together as rows in a matrix.
+This is not as efficient as storing k-mer counts as columns in a matrix, since the elements in a row are not contiguous in memory.
 """
-struct KmerCountRows{A, K, T, M} <: AbstractKmerCountVector{A, K, T, M}
+struct KmerCountRows{A, k, T, M} <: AbstractKmerCountVector{A, k, T, M}
     counts::M
 
-    function KmerCountRows{A, K}(counts::M) where {A, K, T <: Real, M <: AbstractMatrix{T}}
-        @assert size(counts, 2) == A^K
-        new{A, K, T, M}(counts)
+    function KmerCountRows{A, k}(counts::M) where {A, k, T <: Real, M <: AbstractMatrix{T}}
+        @assert size(counts, 2) == A^k
+        new{A, k, T, M}(counts)
     end
 end
 
 @inline Base.size(kmer_count::KmerCountRows) = (size(kmer_count.counts, 1),)
 @inline Base.length(kmer_count::KmerCountRows) = size(kmer_count.counts, 1)
 
-@inline function Base.getindex(kmer_count::KmerCountRows{A, K}, i::Integer) where {A, K}
-    KmerCount{A, K}(view(kmer_count.counts, i, :))
+@inline function Base.getindex(kmer_count::KmerCountRows{A, k}, i::Integer) where {A, k}
+    KmerCount{A, k}(view(kmer_count.counts, i, :))
 end
 
 
-function KmerCountColumns(kcc::KmerCountRows{A, K}) where {A, K}
-    KmerCountColumns{A, K}(transpose(kcc.counts))
+function KmerCountColumns(kcc::KmerCountRows{A, k}) where {A, k}
+    KmerCountColumns{A, k}(transpose(kcc.counts))
 end
 
-function KmerCountRows(kcc::KmerCountColumns{A, K}) where {A, K}
-    KmerCountRows{A, K}(transpose(kcc.counts))
+function KmerCountRows(kcc::KmerCountColumns{A, k}) where {A, k}
+    KmerCountRows{A, k}(transpose(kcc.counts))
 end
 
 @inline Base.transpose(kcc::KmerCountColumns) = KmerCountRows(kcc)

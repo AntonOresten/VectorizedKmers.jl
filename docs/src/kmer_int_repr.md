@@ -1,6 +1,6 @@
-# Integer representation of K-mers
+# Integer representation of k-mers
 
-This package relies on representing K-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
+This package relies on representing k-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
 
 ## DNA sequences
 
@@ -44,7 +44,7 @@ f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]
 !!! note
     Strings are bad! Don't use strings! Please! They're bad! Very bad! Chars have variable length when part of Strings in Julia, so indexing and taking lengths and stuff is kinda slow! Don't use strings! Again: very bad! Use something like LongDNA{4}, please!
 
-This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each K-mer individually, instead of having some kind of sliding window. Moreover, the function takes the K-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
+This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each k-mer individually, instead of having some kind of sliding window. Moreover, the function takes the k-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
 
 ```jldoctest
 julia> kmer_to_int("GATTACA")
@@ -59,3 +59,7 @@ julia> f("GATTACA")
 Amino acid sequences are a little more difficult to deal with since there are a lot more of them, and the vectors would grow in size even quicker. However, we can still represent them as integers, but we can't use bit manipulation anymore.
 
 BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
+
+```jldoctest
+
+```
