@@ -1,6 +1,6 @@
 # Integer representation of k-mers
 
-This package relies on representing K-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
+This package relies on representing k-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
 
 ## DNA sequences
 
@@ -59,3 +59,7 @@ julia> f("GATTACA")
 Amino acid sequences are a little more difficult to deal with since there are a lot more of them, and the vectors would grow in size even quicker. However, we can still represent them as integers, but we can't use bit manipulation anymore.
 
 BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
+
+```jldoctest
+
+```

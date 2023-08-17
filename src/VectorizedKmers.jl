@@ -1,7 +1,7 @@
 module VectorizedKmers
 
-    export AbstractKmerCount
     export KmerCount
+    export get_A, get_k, reset!
 
     export AbstractKmerCountVector
     export KmerCountColumns, KmerCountRows
