@@ -14,6 +14,7 @@ makedocs(;
         "Home" => "index.md",
         "Integer representation of k-mers" => "kmer_int_repr.md",
         "k-mer counting" => "kmer_count.md",
+        "Vectors" => "vectors.md",
     ],
     authors = "Anton O. Sollman",
     checkdocs = :all,

@@ -15,6 +15,8 @@ Values in `sequences` must be between 0 and 3.
 Chars 'A', 'C', 'G', and 'T' can be converted to 0, 1, 3, and 2 respectively using the function:
 `char -> UInt8(char) >> 1 & 0x03`, or `byte -> byte >> 1 & 0x03`,
 which is easy to broadcast to an array of bytes.
+
+Only defined for kmer_count_columns because so that each k-mer count is stored contiguously in memory.
 """
 function VectorizedKmers.count_kmers!(
     kmer_count_columns::KmerCountColumns{4, k, T, M},
