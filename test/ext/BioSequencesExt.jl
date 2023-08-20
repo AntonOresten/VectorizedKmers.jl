@@ -7,10 +7,10 @@ using BioSequences
         @test count_kmers(dna"ACGT", 1).counts == [1, 1, 1, 1]
         @test count_kmers(dna"ACGT", 1) == count_kmers(LongDNA{2}(dna"ACGT"), 1)
 
-        kc = KmerCount{4, 1, Int}()
+        kc = KmerCountVector{4, 1, Int}()
         @test count_kmers!(kc, dna"ACGT").counts == [1, 1, 1, 1]
 
-        kc = KmerCount{4, 2, Int}()
+        kc = KmerCountVector{4, 2, Int}()
         @test count_kmers!(kc, dna"ACGT").counts == [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
 
     end

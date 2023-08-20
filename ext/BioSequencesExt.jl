@@ -3,7 +3,7 @@ module BioSequencesExt
 using VectorizedKmers, BioSequences
 
 function VectorizedKmers.count_kmers!(
-    kmer_count::KmerCount{4, k},
+    kmer_count::KmerCountVector{4, k},
     seq::LongDNA{2};
     reset::Bool = true,
 ) where k
@@ -25,7 +25,7 @@ function VectorizedKmers.count_kmers!(
 end
 
 function VectorizedKmers.count_kmers!(
-    kmer_count::KmerCount{4, k},
+    kmer_count::KmerCountVector{4, k},
     seq::LongDNA{4};
     reset::Bool = true,
 ) where k
@@ -47,17 +47,17 @@ function VectorizedKmers.count_kmers!(
 end
 
 function VectorizedKmers.count_kmers(
-    ::Type{KmerCount{4, k, T}},
+    ::Type{KmerCountVector{4, k, T}},
     seq::LongDNA;
     zeros_func::Function = zeros,
 ) where {k, T}
-    kmer_count = KmerCount{4, k, T}(zeros_func)
+    kmer_count = KmerCountVector{4, k, T}(zeros_func)
     count_kmers!(kmer_count, seq, reset=false)
     kmer_count
 end
 
 function VectorizedKmers.count_kmers(seq::LongDNA, K::Integer, T::DataType=UInt32)
-    count_kmers(KmerCount{4, K, T}, seq)
+    count_kmers(KmerCountVector{4, K, T}, seq)
 end
 
 end
