@@ -15,6 +15,8 @@ Values in `sequences` must be between 0 and 3.
 Chars 'A', 'C', 'G', and 'T' can be converted to 0, 1, 3, and 2 respectively using the function:
 `char -> UInt8(char) >> 1 & 0x03`, or `byte -> byte >> 1 & 0x03`,
 which is easy to broadcast to an array of bytes.
+
+Only defined for kmer_count_columns because so that each k-mer count is stored contiguously in memory.
 """
 function VectorizedKmers.count_kmers!(
     kmer_count_columns::KmerCountColumns{4, k, T, M},
@@ -32,7 +34,7 @@ function VectorizedKmers.count_kmers!(
     @assert length(kmer_count_columns) - column_offset >= num_sequences "The column offset is too high. Sequences can't fit."
     @assert length(sequence_lengths) == num_sequences "The length of the sequence_lengths vector ($(length(sequence_lengths))) does not match the number of sequences ($num_sequences)."
     @assert maximum(sequence_lengths) <= max_seq_len "The maximum sequence length provided ($(maximum(sequence_lengths))) is higher than the size of the sequences matrix ($max_seq_len)."
-    @assert max_seq_len > k-1 "All sequences are shorter than k; k-mer counting is not possible."
+    max_seq_len > k-1 && @warn "All sequences are shorter than k. No k-mers will be counted."
 
     function count_kmers_column!(count_matrix, sequences, sequence_lengths, k, mask)
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
@@ -63,6 +65,5 @@ function VectorizedKmers.count_kmers!(
 
     kmer_count_columns
 end
-
 
 end
