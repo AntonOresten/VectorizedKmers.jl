@@ -16,23 +16,23 @@ For DNA, each non-ambiguous nucleotide is assigned a number between 0 and 3:
 !!! note
     Any ordering works, but this one is the one used by [BioSequences.jl](https://github.com/BioJulia/BioSequences.jl), and it also has some nice properties, like being in alphabetical order, and that XOR-ing a base with 3 gives you its complement.
 
-We could theoretically convert any DNA sequence to an integer, but 64-bit integers limit us to 32-mers.
+We could theoretically convert any DNA sequence to an integer, but 64-bit unsigned integers limit us to 32-mers.
 
 Consider the DNA sequence `GATTACA`. If we convert it to an integer using the table above, we get $2033010_4 = 10001111000100_2 = 9156_{10}$, so the integer value of `GATTACA` is 9156. Since Julia uses 1-based indexing, we would add 1 to this value to get the index of `GATTACA` in the vector.
 
 Writing a function for this might look like the following:
 
 ```jldoctest
-const DNA_ENCODING_VECTOR = zeros(Int, 127)
+const DNA_ENCODING_VECTOR = zeros(UInt, 127)
 
 for (i, char) in enumerate("ACGT")
     DNA_ENCODING_VECTOR[char % Int8] = i - 1
 end
 
 function kmer_to_int(kmer::String)
-    kmer_int = 0
+    kmer_int = zero(UInt)
     for char in kmer
-        kmer_int = (kmer_int << 2) + DNA_ENCODING_VECTOR[char % Int8]
+        kmer_int = (kmer_int << 2) | DNA_ENCODING_VECTOR[char % Int8]
     end
     kmer_int
 end
@@ -56,7 +56,7 @@ julia> f("GATTACA")
 
 ## Amino acid sequences
 
-Amino acid sequences are a little more difficult to deal with since there are a lot more of them, and the vectors would grow in size even quicker. However, we can still represent them as integers, but we can't use bit manipulation anymore.
+Amino acid sequences are a little more difficult to deal with since there are a lot more of them, and the vectors would grow in size even quicker. However, we can still represent them as integers, although we can't use bit manipulation anymore.
 
 BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
 
