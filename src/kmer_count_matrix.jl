@@ -8,8 +8,7 @@ and `M` is the type of the matrix in which the k-mer counts are stored.
 """
 abstract type AbstractKmerCountMatrix{A, k, T <: Real, M <: AbstractMatrix{T}} <: AbstractVector{KmerCountVector{A, k, T, V} where {V <: AbstractVector{T}}}  end
 
-@inline eltype(::AbstractKmerCountMatrix{A, k, T}) where {A, k, T} = T
-@inline reset!(kcm::AbstractKmerCountMatrix) = fill!(kcm.counts, zero(eltype(kcm)))
+@inline reset!(kcm::AbstractKmerCountMatrix) = fill!(kcm.counts, 0)
 
 """
     KmerCountColumns{A, k, T, M} <: AbstractKmerCountMatrix{A, k, T, M}

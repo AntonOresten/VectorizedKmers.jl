@@ -9,6 +9,8 @@
             @test kcc[1] == KmerCountVector{4, 2}()
 
             @test transpose(kcc) == kcc'
+
+            @test all(iszero, reset!(kcc))
         end
 
         @testset "KmerCountRows" begin
