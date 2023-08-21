@@ -3,8 +3,8 @@ using Test
 
 @testset "VectorizedKmers.jl" begin
 
-    include("kmer_count.jl")
-    include("kmer_count_vec.jl")
+    include("kmer_count_vector.jl")
+    include("kmer_count_matrix.jl")
 
     @testset "extensions" begin
         include("ext/BioSeqCUDAExt.jl")
