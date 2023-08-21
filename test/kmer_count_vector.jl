@@ -15,6 +15,7 @@
 
         @test summary(kc) == "KmerCountVector{4, 1, Int64, Vector{Int64}}"
         @test repr(kc) == "KmerCountVector{4, 1, Int64, Vector{Int64}}([3, 1, 1, 2])"
+        @test repr(KmerCountVector{4, 2}()) == "KmerCountVector{4, 2, Int64, Vector{Int64}}([0, 0, 0, 0, 0, 0, 0, 0, 0, 0 … (6 more)])"
     end
 
     @testset "count_kmers!" begin
