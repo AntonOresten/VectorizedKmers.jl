@@ -5,7 +5,7 @@ DocTestSetup = quote
 end
 ```
 
-# Vectors of k-mer counts
+# Matrices of k-mer counts
 
 How can we efficiently store multiple k-mer counts of sequences? We *could* use a normal vector: `Base.Vector{<:KmerCountVector}`, but remember that `KmerCountVector` can wrap any `AbstractVector`, including rows/columns of matrices, which means that we could store the k-mer counts of multiple sequences next to each other in a matrix (all $k$-mer counts will have a size of $A^k$). This is exactly  what the `AbstractKmerCountMatrix` type is for. It has two subtypes: `KmerCountColumns` and `KmerCountRows`, which wrap `AbstractMatrix` types, and store the k-mer counts as columns or rows of the matrix, respectively.
 

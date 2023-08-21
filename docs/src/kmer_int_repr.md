@@ -1,6 +1,6 @@
 # Integer representation of k-mers
 
-This package relies on representing k-mers as integers for indexing, and understanding how it works is recommended (unless you're only using higher-level API stuff).
+This package relies on representing k-mers as integers for indexing. This page goes over how that works exactly.
 
 ## DNA sequences
 
@@ -42,7 +42,7 @@ f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]
 ```
 
 !!! note
-    Strings are bad! Don't use strings! Please! They're bad! Very bad! Chars have variable length when part of Strings in Julia, so indexing and taking lengths and stuff is kinda slow! Don't use strings! Again: very bad! Use something like LongDNA{4}, please!
+    If you care about performance, you should use other types like `LongDNA{4}` instead of `String`. A lot of operations on strings take linear time, whereas they're constant time for `LongDNA{4}`. This includes accessing substrings like k-mers.
 
 This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each k-mer individually, instead of having some kind of sliding window. Moreover, the function takes the k-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
 
