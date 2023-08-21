@@ -79,7 +79,13 @@ julia> reinterpret.(Int8, [AA_A, AA_M, AA_I, AA_N, AA_O])
  20
 ```
 
-We can use this to convert amino acid sequences to integers, like we did with DNA in the form of Strings, but without the fancy bit manipulation stuff:
+We can use this to convert amino acid sequences to integers, like we did with DNA in the form of Strings, but without the fancy bit manipulation stuff.
+
+Let's say we want to convert the amino acid sequence `AMINO` to an integer. As seen above, the amino acids in the sequence have values of `0`, `12`, `9`, `2`, and `20` respectively. Thus, the integer value of the k-mer should be:
+
+$0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556$
+
+We can write a function for this:
 
 ```jldoctest
 function kmer_to_int(kmer::LongAA)
@@ -91,11 +97,7 @@ function kmer_to_int(kmer::LongAA)
 end
 ```
 
-Let's try converting the amino acid sequence `AMINO` to an integer! As we saw above, each amino acid in the sequence has a value of `0`, `12`, `9`, `2`, and `20` respectively. Thus, the integer value of the k-mer should be:
-
-$0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556$
-
-We can use the `aa"..."` string macro to create a `LongAA` instance:
+To test it, we can use the `aa"..."` string macro to create a `LongAA` instance:
 
 ```jldoctest
 julia> kmer_to_int(aa"AMINO")
