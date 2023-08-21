@@ -11,7 +11,7 @@ function VectorizedKmers.count_kmers!(
     reset::Bool = true,
 ) where {k, T, M <: CuMatrix{T}}
     counts = kmer_count_columns.counts
-    #reset && CUDA.fill!(counts, 0)
+    reset && CUDA.fill!(counts, 0)
     isempty(sequences) && return kmer_count_columns
 
     num_seqs = length(sequences)
