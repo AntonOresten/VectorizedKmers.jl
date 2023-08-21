@@ -1,11 +1,9 @@
-import CUDA
+using CUDA
 
 if CUDA.functional()
 
-    using CUDA
-    
-    @testset "CUDAExt.jl" begin
+@testset "CUDAExt.jl" begin
 
-    end
+end
 
 end

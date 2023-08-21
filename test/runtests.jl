@@ -7,6 +7,7 @@ using Test
     include("kmer_count_vec.jl")
 
     @testset "extensions" begin
+        include("ext/BioSeqCUDAExt.jl")
         include("ext/BioSequencesExt.jl")
         include("ext/CUDAExt.jl")
     end
