@@ -14,7 +14,7 @@ For DNA, each non-ambiguous nucleotide is assigned a number between 0 and 3:
 | T          | 3      | 11     |
 
 !!! note
-    Any ordering works, but this one is the one used by [BioSequences.jl](https://github.com/BioJulia/BioSequences.jl), and it also has some nice properties, like being in alphabetical order, and that XOR-ing a base with 3 gives you its complement.
+    Any ordering works, but this is the one used by [BioSequences.jl](https://github.com/BioJulia/BioSequences.jl). It also has some nice properties, like being in alphabetical order, and that XOR-ing a base with 3 gives you its complement.
 
 We could theoretically convert any DNA sequence to an integer, but 64-bit unsigned integers limit us to 32-mers.
 
@@ -61,5 +61,45 @@ Amino acid sequences are a little more difficult to deal with since there are a 
 BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
 
 ```jldoctest
+julia> using BioSequences
 
+julia> length(AminoAcidAlphabet())
+28
 ```
+
+The AminoAcidAlphabet consists of amino acids with 8 bits each, so we can reinterpret them as 8-bit integers.
+
+```jldoctest
+julia> reinterpret.(Int8, [AA_A, AA_M, AA_I, AA_N, AA_O])
+5-element Vector{Int8}:
+  0
+ 12
+  9
+  2
+ 20
+```
+
+We can use this to convert amino acid sequences to integers, like we did with DNA in the form of Strings, but without the fancy bit manipulation stuff:
+
+```jldoctest
+function kmer_to_int(kmer::LongAA)
+    kmer_int = zero(UInt)
+    for aa in kmer
+        kmer_int = kmer_int * 28 + reinterpret(UInt8, aa)
+    end
+    kmer_int
+end
+```
+
+Let's try converting the amino acid sequence `AMINO` to an integer! As we saw above, each amino acid in the sequence has a value of `0`, `12`, `9`, `2`, and `20` respectively. Thus, the integer value of the k-mer should be:
+
+$0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556$
+
+We can use the `aa"..."` string macro to create a `LongAA` instance:
+
+```jldoctest
+julia> kmer_to_int(aa"AMINO")
+270556
+```
+
+Marvelous!
