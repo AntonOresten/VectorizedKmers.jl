@@ -24,11 +24,11 @@ julia> kcc = KmerCountColumns{4, k}(zeros(Int, 4^k, n))
 ```
 
 Oof! That does not look pretty... Let's break down what's happening here:
-- The matrix consists of three different 1-mer counts, stored in columns.
+- The matrix consists of three different 1-mer count vectors of length 4, stored in columns.
 - `KmerCountColumns` is an `AbstractVector`, so it gets displayed in the same way that a vector normally would, with one element per row.
 - Each element of the `KmerCountColumns` is a `KmerCountVector` wrapped around a view of a column of the underlying matrix, hence the `SubArray` type.
 
-We can see the actual underlying matrix by looking at the `counts` field:
+We can take a look at the underlying matrix by accessing the `counts` field:
 
 ```jldoctest
 julia> kcc.counts
@@ -39,9 +39,9 @@ julia> kcc.counts
  0  0  0
 ```
 
-That looks much better!
+That looks much better! Three columns of zeros, each with a length of 4, representing the 1-mer counts of three sequences.
 
-We can also access each column by index:
+We can also access each column by index, which gives us a `KmerCountVector` wrapped around a view of the corresponding column:
 
 ```jldoctest
 julia> kcc[1]
