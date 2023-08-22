@@ -10,7 +10,7 @@
         @test eltype(kc) == Int
         @test length(KmerCountVector{4, 2}()) == 16
 
-        @test get_A(kc) == 4
+        @test get_S(kc) == 4
         @test get_k(kc) == 1
 
         @test summary(kc) == "KmerCountVector{4, 1, Int64, Vector{Int64}}"
