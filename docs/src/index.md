@@ -14,7 +14,7 @@ end
 [![Status](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/anton083/VectorizedKmers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/anton083/VectorizedKmers.jl)
 
-[VectorizedKmers.jl](https://github.com/anton083/VectorizedKmers.jl) is a Julia package for fast $k$-mer counting of biological sequences. The core idea is that $k$-mers with an alphabet size $A$ are essentially integers in base $A$, and can be used as indices in a vector of size $S^k$ to count the corresponding $k$-mers.
+[VectorizedKmers.jl](https://github.com/anton083/VectorizedKmers.jl) is a Julia package for fast $k$-mer counting of biological sequences. The core idea is that $k$-mers with an alphabet size $S$ are essentially integers in base $S$, and can be used as indices in a vector of size $S^k$ to count the corresponding $k$-mers.
 
 The `KmerCountVector` type is a wrapper for `AbstractVector`, which means that these vector k-mer counts are not limited to Julia's `Base.Vector` type; other kinds of vectors can be used as well, such as `CUDA.CuVector`, `SparseArrays.SparseVector` or even matrix views.
 
