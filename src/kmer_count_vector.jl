@@ -44,33 +44,8 @@ function Base.show(io::IO, kc::KmerCountVector)
     if len_counts <= max_elements_to_show
         print(io, join(kc.counts, ", "))
     else
-        print(io, join(kc.counts[1:max_elements_to_show], ", "), " … (", len_counts - max_elements_to_show, " more)")
+        print(io, join(view(kc.counts, 1:max_elements_to_show), ", "), " … (", len_counts - max_elements_to_show, " more)")
     end
 
     print(io, "])")
-end
-
-# The k-mers in `kmers` must be represented as integers between 0 and length(kmer_count) - 1.
-#=  This is not a very efficient method, since it takes an entire vector. It is mainly used for testing.
-    Ideally the k-mers would be procedurally calculated in constant memory. =#
-function count_kmers!(
-    kmer_count::KmerCountVector{S, k},
-    kmers::Vector{<:Integer};
-    reset::Bool = true,
-) where {S, k}
-    @assert maximum(kmers) < S^k
-    reset && zeros!(kmer_count)
-    for kmer in kmers
-        kmer_count[kmer + 1] += 1
-    end
-    kmer_count
-end
-
-function count_kmers(
-    ::Type{KmerCountVector{S, k, T}}, kmers::Vector{<:Integer};
-    zeros_func::Function = zeros,
-) where {S, k, T}
-    kmer_count = KmerCountVector{S, k, T}(zeros_func)
-    count_kmers!(kmer_count, kmers, reset=false)
-    return kmer_count
 end

@@ -10,9 +10,9 @@ module VectorizedKmers
     export AbstractKmerCountMatrix
     export KmerCountColumns, KmerCountRows
 
-include("count_kmers.jl")
 include("kmer_count.jl")
 include("kmer_count_vector.jl")
 include("kmer_count_matrix.jl")
+include("count_kmers.jl")
 
 end
