@@ -5,9 +5,9 @@ DocTestSetup = quote
 end
 ```
 
-# Vectors of k-mer counts
+# Matrices of k-mer counts
 
-How can we efficiently store multiple k-mer counts of sequences? We *could* use a normal vector: `Base.Vector{<:KmerCountVector}`, but remember that `KmerCountVector` can wrap any `AbstractVector`, including rows/columns of matrices, which means that we could store the k-mer counts of multiple sequences next to each other in a matrix (all $k$-mer counts will have a size of $A^k$). This is exactly  what the `AbstractKmerCountMatrix` type is for. It has two subtypes: `KmerCountColumns` and `KmerCountRows`, which wrap `AbstractMatrix` types, and store the k-mer counts as columns or rows of the matrix, respectively.
+How can we efficiently store multiple k-mer counts of sequences? We *could* use a regular vector: `Base.Vector{<:KmerCountVector}`, but remember that `KmerCountVector` can wrap any `AbstractVector`, including rows/columns of matrices, which means that we can store the k-mer counts of multiple sequences next to each other in a matrix (all $k$-mer counts will have a size of $A^k$). This is exactly what the `AbstractKmerCountMatrix` type is for. It has two subtypes: `KmerCountColumns` and `KmerCountRows`, which wrap `AbstractMatrix` types, and store the k-mer counts as columns or rows of the matrix, respectively.
 
 Let's create an instance of `KmerCountColumns`, and configure it for storing the 1-mer counts of three DNA sequences. The alphabet size for DNA is 4, so each KmerCountVector will have a size of $A^k=4^1=4$. We'll initialize it with a matrix of zeros:
 
@@ -24,22 +24,11 @@ julia> kcc = KmerCountColumns{4, k}(zeros(Int, 4^k, n))
 ```
 
 Oof! That does not look pretty... Let's break down what's happening here:
-- The matrix consists of three different 1-mer counts, stored in columns.
+- The matrix consists of three different 1-mer count vectors of length 4, stored in columns.
 - `KmerCountColumns` is an `AbstractVector`, so it gets displayed in the same way that a vector normally would, with one element per row.
 - Each element of the `KmerCountColumns` is a `KmerCountVector` wrapped around a view of a column of the underlying matrix, hence the `SubArray` type.
 
-We can easily access each KmerCountVector by index:
-
-```jldoctest
-julia> kcc[1]
-4-element KmerCountVector{4, 1, Int64, SubArray{Int64, 1, Matrix{Int64}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}}:
- 0
- 0
- 0
- 0
-```
-
-We can see the actual underlying matrix by looking at the `counts` field:
+We can take a look at the underlying matrix by accessing the `counts` field:
 
 ```jldoctest
 julia> kcc.counts
@@ -50,11 +39,22 @@ julia> kcc.counts
  0  0  0
 ```
 
-That looks much better!
+That looks much better! Three columns of zeros, each with a length of 4, representing the 1-mer counts of three sequences.
+
+We can also access each column by index, which gives us a `KmerCountVector` wrapped around a view of the corresponding column:
+
+```jldoctest
+julia> kcc[1]
+4-element KmerCountVector{4, 1, Int64, SubArray{Int64, 1, Matrix{Int64}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}}:
+ 0
+ 0
+ 0
+ 0
+```
 
 ### Let's count some k-mers
 
-Now that we understand how `AbstractKmerCountMatrix` works, we can count k-mers of sequences using the `count_kmers!` function, which takes a `KmerCountVector` and a sequence as input.
+Now that we understand how `AbstractKmerCountMatrix` works, we can count k-mers of sequences using a method of `count_kmers!` that takes a `KmerCountVector` and a sequence as input.
 
 Here, our `KmerCountColumns` instance, which we call `kcc`, is configured to count the 1-mers of DNA. Let's count the 1-mers of the sequence `GATTACA` in the first column of `kcc`:
 

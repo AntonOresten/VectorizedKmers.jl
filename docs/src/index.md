@@ -29,11 +29,3 @@ You can install VectorizedKmers in your environment from the Julia REPL by enter
 ```
 add VectorizedKmers
 ```
-
-
-```@index
-```
-
-```@autodocs
-Modules = [VectorizedKmers]
-```

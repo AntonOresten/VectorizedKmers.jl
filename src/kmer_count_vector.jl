@@ -41,8 +41,20 @@ function Base.summary(kc::KmerCountVector)
 end
 
 function Base.show(io::IO, kc::KmerCountVector)
-    print(io, summary(kc)*"($(kc.counts))")
+    max_elements_to_show = 10
+    len_counts = length(kc.counts)
+    
+    print(io, summary(kc) * "([")
+
+    if len_counts <= max_elements_to_show
+        print(io, join(kc.counts, ", "))
+    else
+        print(io, join(kc.counts[1:max_elements_to_show], ", "), " … (", len_counts - max_elements_to_show, " more)")
+    end
+
+    print(io, "])")
 end
+
 
 """
     count_kmers!(kmer_count, kmers; reset=true)
