@@ -7,9 +7,9 @@ end
 
 # Matrices of k-mer counts
 
-How can we efficiently store multiple k-mer counts of sequences? We *could* use a regular vector: `Base.Vector{<:KmerCountVector}`, but remember that `KmerCountVector` can wrap any `AbstractVector`, including rows/columns of matrices, which means that we can store the k-mer counts of multiple sequences next to each other in a matrix (all $k$-mer counts will have a size of $A^k$). This is exactly what the `AbstractKmerCountMatrix` type is for. It has two subtypes: `KmerCountColumns` and `KmerCountRows`, which wrap `AbstractMatrix` types, and store the k-mer counts as columns or rows of the matrix, respectively.
+How can we efficiently store multiple k-mer counts of sequences? We *could* use a regular vector: `Base.Vector{<:KmerCountVector}`, but remember that `KmerCountVector` can wrap any `AbstractVector`, including rows/columns of matrices, which means that we can store the k-mer counts of multiple sequences next to each other in a matrix (all $k$-mer counts will have a size of $S^k$). This is exactly what the `AbstractKmerCountMatrix` type is for. It has two subtypes: `KmerCountColumns` and `KmerCountRows`, which wrap `AbstractMatrix` types, and store the k-mer counts as columns or rows of the matrix, respectively.
 
-Let's create an instance of `KmerCountColumns`, and configure it for storing the 1-mer counts of three DNA sequences. The alphabet size for DNA is 4, so each KmerCountVector will have a size of $A^k=4^1=4$. We'll initialize it with a matrix of zeros:
+Let's create an instance of `KmerCountColumns`, and configure it for storing the 1-mer counts of three DNA sequences. The alphabet size for DNA is 4, so each KmerCountVector will have a size of $S^k=4^1=4$. We'll initialize it with a matrix of zeros:
 
 ```jldoctest
 julia> k = 1;
