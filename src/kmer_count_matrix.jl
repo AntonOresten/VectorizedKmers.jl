@@ -12,8 +12,7 @@ abstract type AbstractKmerCountMatrix{S, k, T, M} <: AbstractKmerCounts{2, S, k,
 @inline Base.size(kcm::AbstractKmerCountMatrix) = size(kcm.counts)
 @inline Base.eachcol(kcm::AbstractKmerCountMatrix) = eachcol(kcm.counts)
 @inline Base.eachrow(kcm::AbstractKmerCountMatrix) = eachrow(kcm.counts)
-@inline Base.eachindex(kcm::AbstractKmerCountMatrix) = Base.OneTo(length(kcm))
-@inline eachvec(kcm::AbstractKmerCountMatrix) = (kcm[i] for i in eachindex(kcm))
+@inline eachvec(kcm::AbstractKmerCountMatrix) = (kcm[i] for i in 1:length(kcm))
 
 
 """
