@@ -1,6 +1,6 @@
 module VectorizedKmers
 
-    export count_kmers!, count_kmers, count_kmers_gpu
+    export count_kmers!, count_kmers
 
     export AbstractKmerCounts
     export get_S, get_k, counts, zeros!

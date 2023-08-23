@@ -43,11 +43,3 @@ function count_kmers(
     count_kmers!(kmer_count_vector, kmers, reset=false)
     kmer_count_vector
 end
-
-
-"""
-    count_kmers_gpu(sequences, k)
-
-Count the k-mers in `sequences` using the GPU.
-"""
-function count_kmers_gpu end
