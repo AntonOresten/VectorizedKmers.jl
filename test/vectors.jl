@@ -1,4 +1,4 @@
-@testset "kmer_count_vec.jl" begin
+@testset "vectors.jl" begin
 
     @testset "AbstractKmerCountMatrix" begin
 
@@ -14,6 +14,7 @@
             kcc[1, 1] = 1
             @test kcc[1, 1] == 1
             @test eachcol(kcc)[1] == kcc[1].counts
+            @test first(eachvec(kcc)) == kcc[1]
         end
 
         @testset "KmerCountRows" begin
@@ -28,6 +29,7 @@
             kcr[1, 1] = 1
             @test kcr[1, 1] == 1
             @test eachrow(kcr)[1] == kcr[1].counts
+            @test first(eachvec(kcr)) == kcr[1]
         end
 
     end

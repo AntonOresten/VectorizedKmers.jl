@@ -1,18 +1,32 @@
 module VectorizedKmers
 
-    export count_kmers!, count_kmers, count_kmers_gpu
+export
+    # AbstractKmerCountArray
+    AbstractKmerCountArray,
+    get_S,
+    get_k,
+    counts,
+    zeros!,
 
-    export AbstractKmerCounts
-    export get_S, get_k, counts, zeros!
+    # Vector
+    AbstractKmerCountVector,
+    KmerCountVector,
 
-    export KmerCountVector
+    # Matrix
+    AbstractKmerCountMatrix,
+    KmerCountVectors,
+    KmerCountColumns,
+    KmerCountRows,
+    eachvec,
 
-    export AbstractKmerCountMatrix
-    export KmerCountColumns, KmerCountRows
+    # counting
+    count_kmers!,
+    count_kmers
 
-include("kmer_count.jl")
-include("kmer_count_vector.jl")
-include("kmer_count_matrix.jl")
-include("count_kmers.jl")
+include("array.jl")
+include("vector.jl")
+include("vectors.jl")
+include("conversion.jl")
+include("counting.jl")
 
 end

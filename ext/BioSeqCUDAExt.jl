@@ -7,7 +7,7 @@ using VectorizedKmers, BioSequences, CUDA
 function VectorizedKmers.count_kmers!(
     kmer_count_columns::KmerCountColumns{4, k, T, M},
     sequences::Vector{LongDNA{4}};
-    column_offset::Int = 0,
+    column_offset::Integer = 0,
     reset::Bool = true,
 ) where {k, T, M <: CuMatrix{T}}
     counts = kmer_count_columns.counts
@@ -82,18 +82,6 @@ function VectorizedKmers.count_kmers!(
     @cuda threads=threads blocks=blocks count_kmers_column!(
         counts, data_matrix, seq_lengths, num_seqs, k, mask, data_lengths, column_offset)
 
-    kmer_count_columns
-end
-
-function VectorizedKmers.count_kmers_gpu(
-    sequences::Vector{LongDNA{4}},
-    k::Int,
-    T::Type{<:Real} = Int;
-    column_offset::Int = 0,
-    reset::Bool = true,
-)
-    kmer_count_columns = KmerCountColumns{4, k}(CUDA.zeros(T, 4^k, length(sequences)))
-    count_kmers!(kmer_count_columns, sequences, column_offset=column_offset, reset=reset)
     kmer_count_columns
 end
 
