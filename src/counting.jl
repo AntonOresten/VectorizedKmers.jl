@@ -7,6 +7,8 @@ If `reset` is `true`, the array will be zero-ed before counting.
 """
 function count_kmers! end
 
+# This method is used for testing.
+# sequence is wrapped by RefValue cause otherwise it gets mistaken for a vector of sequences.
 function count_kmers!(
     kcv::KmerCountVector{S, k}, sequence::Base.RefValue{Vector{T}};
     reset::Bool = true,
@@ -16,10 +18,9 @@ function count_kmers!(
     reset && zeros!(kcv)
     length(sequence) < k && return kcv
     counts = kcv.counts
+    mask = unsigned(S^k)
 
     kmer = zero(UInt)
-    mask = S^k
-
     for m in view(sequence, 1:k-1)
         kmer = kmer * S + m
     end
@@ -57,7 +58,7 @@ function count_kmers(
     sequence::SequenceType, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
-    kcv = KmerCountVector{S, k}(T, zeros)
+    kcv = KmerCountVector{S, k}(T=T, zeros=zeros)
     count_kmers!(kcv, sequence, reset=false)
     kcv
 end
@@ -66,7 +67,7 @@ function count_kmers(
     sequences::Vector{SequenceType}, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros, D = 2,
 ) where SequenceType
-    kcvs = KmerCountVectors{D, S, k}(length(sequences), T, zeros)
+    kcvs = KmerCountVectors{D, S, k}(length(sequences), T=T, zeros=zeros)
     count_kmers!(kcvs, sequences, reset=false)
     kcvs
 end
