@@ -7,7 +7,7 @@ end
 
 # Vectors of k-mer counts
 
-The `KmerCountVector` type has four type parameters, but you only really need to care about the first two: `A`, the alphabet size, and `k`, the k-mer length. So, to count the 6-mers of a DNA sequence, you would use `KmerCountVector{4, 6}`. For each of these k-mer counts, memory for a vector of size `S^k` is allocated, unless a vector type like `SparseVector` is used. This brings us to the two other type parameters: `T`, which is the vector element type, and `V`, which is the type of the actual vector.
+The `KmerCountVector` type has four type parameters, but you only really need to care about the first two: `S`, the alphabet size, and `k`, the k-mer length. So, to count the 6-mers of a DNA sequence, you would use `KmerCountVector{4, 6}`. For each of these k-mer counts, memory for a vector of size `S^k` is allocated, unless a vector type like `SparseVector` is used. This brings us to the two other type parameters: `T`, which is the vector element type, and `V`, which is the type of the actual vector.
 
 Let's see it in action! Here we import `BioSequences` to unlock a method of `count_kmers` that works on the `LongDNA` type. In this example, we count the 1-mers of the sequence `GATTACA`. The result is a `KmerCountVector{4, 1, Int64, Vector{Int64}}`, which is a vector of 4 `Int64` elements.
 

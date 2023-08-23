@@ -3,12 +3,12 @@ module BioSequencesExt
 using VectorizedKmers, BioSequences
 
 function VectorizedKmers.count_kmers!(
-    kmer_count::KmerCountVector{4, k},
+    kmer_count_vector::KmerCountVector{4, k},
     seq::LongDNA{2};
     reset::Bool = true,
 ) where k
-    counts = kmer_count.counts
-    reset && zeros!(kmer_count)
+    reset && zeros!(kmer_count_vector)
+    counts = kmer_count_vector.counts
     len = length(seq)
     mask = UInt(1) << 2k - 1
     kmer = UInt(0)
@@ -21,16 +21,16 @@ function VectorizedKmers.count_kmers!(
             counts[kmer + 1] += k <= i
         end
     end
-    kmer_count
+    kmer_count_vector
 end
 
 function VectorizedKmers.count_kmers!(
-    kmer_count::KmerCountVector{4, k},
+    kmer_count_vector::KmerCountVector{4, k},
     seq::LongDNA{4};
     reset::Bool = true,
 ) where k
-    counts = kmer_count.counts
-    reset && zeros!(kmer_count)
+    reset && zeros!(kmer_count_vector)
+    counts = kmer_count_vector.counts
     len = length(seq)
     mask = UInt(1) << 2k - 1
     kmer = UInt(0)
@@ -43,21 +43,43 @@ function VectorizedKmers.count_kmers!(
             counts[kmer + 1] += k <= i
         end
     end
-    kmer_count
+    kmer_count_vector
 end
 
 function VectorizedKmers.count_kmers(
-    ::Type{KmerCountVector{4, k, T}},
-    seq::LongDNA;
+    seq::LongDNA,
+    k::Integer,
+    T::Type{<:Real} = Int,
     zeros_func::Function = zeros,
-) where {k, T}
-    kmer_count = KmerCountVector{4, k, T}(zeros_func)
-    count_kmers!(kmer_count, seq, reset=false)
-    kmer_count
+)
+    kmer_count_vector = KmerCountVector{4, k}(T, zeros_func)
+    count_kmers!(kmer_count_vector, seq, reset=false)
+    kmer_count_vector
 end
 
-function VectorizedKmers.count_kmers(seq::LongDNA, K::Integer, T::DataType=UInt32)
-    count_kmers(KmerCountVector{4, K, T}, seq)
+
+function VectorizedKmers.count_kmers!(
+    kmer_count_columns::KmerCountColumns{4, k},
+    sequences::Vector{LongDNA{N}};
+    column_offset::Integer = 0,
+    reset::Bool = true
+) where {k, N}
+    kcv_gen = Iterators.drop(eachvec(kmer_count_columns), column_offset)
+    for (kcv, seq) in zip(kcv_gen, sequences)
+        count_kmers!(kcv, seq, reset=reset)
+    end
+    kmer_count_columns
+end
+
+function VectorizedKmers.count_kmers(
+    sequences::Vector{LongDNA{4}},
+    k::Integer,
+    T::Type{<:Real} = Int,
+    zeros_func::Function = zeros,
+)
+    kmer_count_columns = KmerCountColumns{4, k}(length(sequences), T, zeros_func)
+    count_kmers!(kmer_count_columns, sequences, reset=false)
+    kmer_count_columns
 end
 
 end

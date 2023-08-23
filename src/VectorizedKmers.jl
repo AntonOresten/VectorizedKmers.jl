@@ -13,7 +13,7 @@ module VectorizedKmers
 
 include("kmer_count.jl")
 include("kmer_count_vector.jl")
-include("kmer_count_matrix.jl")
+include("kmer_count_matrix/matrix.jl")
 include("count_kmers.jl")
 
 end

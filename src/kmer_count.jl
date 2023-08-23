@@ -21,3 +21,13 @@ abstract type AbstractKmerCounts{N, S, k, T <: Real, A <: AbstractArray{T, N}} <
 @inline get_k(::AbstractKmerCounts{N, S, k}) where {N, S, k} = k
 @inline counts(kc::AbstractKmerCounts) = kc.counts
 @inline zeros!(kc::AbstractKmerCounts) = fill!(kc.counts, zero(eltype(kc)))
+
+Base.hash(kc::AbstractKmerCounts, h::UInt) = hash(typeof(kc), hash(kc.counts, h))
+
+function Base.:(==)(kc1::AbstractKmerCounts, kc2::AbstractKmerCounts)
+    all((
+        get_S(kc1) == get_S(kc2),
+        kc1.counts == kc2.counts,
+        typeof(kc1) == typeof(kc2) || typeof(kc1.counts) != typeof(kc2.counts), 
+    ))
+end

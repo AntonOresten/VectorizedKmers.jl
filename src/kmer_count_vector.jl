@@ -9,42 +9,34 @@ which in turn has type `V`.
 struct KmerCountVector{S, k, T, V} <: AbstractKmerCounts{1, S, k, T, V}
     counts::V
 
-    function KmerCountVector{S, k, T, V}(counts::V) where {S, k, T, V}
+    function KmerCountVector{S, k}(counts::V) where {S, k, T <: Real, V <: AbstractVector{T}}
         @assert length(counts) == S^k
         new{S, k, T, V}(counts)
     end
 
-    function KmerCountVector{S, k}(counts::V) where {S, k, T <: Real, V <: AbstractVector{T}}
-        KmerCountVector{S, k, T, V}(counts)
-    end
-
-    function KmerCountVector{S, k, T}(zeros_func::Function = zeros) where {S, k, T}
+    function KmerCountVector{S, k}(T::Type{<:Real}=Int, zeros_func::Function=zeros) where {S, k}
         KmerCountVector{S, k}(zeros_func(T, S^k))
     end
-
-    function KmerCountVector{S, k}(zeros_func::Function = zeros) where {S, k}
-        KmerCountVector{S, k, Int}(zeros_func)
-    end
 end
 
-@inline Base.size(kmer_count::KmerCountVector) = size(kmer_count.counts)
-@inline Base.length(kmer_count::KmerCountVector) = length(kmer_count.counts)
-@inline Base.getindex(kmer_count::KmerCountVector, i::Integer) = kmer_count.counts[i]
+@inline Base.size(kcv::KmerCountVector) = size(kcv.counts)
+@inline Base.length(kcv::KmerCountVector) = length(kcv.counts)
+@inline Base.getindex(kcv::KmerCountVector, i::Integer) = kcv.counts[i]
 
-function Base.summary(kc::KmerCountVector)
-    string(typeof(kc))
+function Base.summary(kcv::KmerCountVector)
+    string(typeof(kcv))
 end
 
-function Base.show(io::IO, kc::KmerCountVector)
+function Base.show(io::IO, kcv::KmerCountVector)
     max_elements_to_show = 10
-    len_counts = length(kc.counts)
+    len_counts = length(kcv.counts)
     
-    print(io, summary(kc) * "([")
+    print(io, summary(kcv) * "([")
 
     if len_counts <= max_elements_to_show
-        print(io, join(kc.counts, ", "))
+        print(io, join(kcv.counts, ", "))
     else
-        print(io, join(view(kc.counts, 1:max_elements_to_show), ", "), " … (", len_counts - max_elements_to_show, " more)")
+        print(io, join(view(kcv.counts, 1:max_elements_to_show), ", "), " … (", len_counts - max_elements_to_show, " more)")
     end
 
     print(io, "])")
