@@ -1,12 +1,12 @@
 """
-    KmerCountVector{S, k, T, V}
+    KmerCountVector{S, k, T, V} <: AbstractKmerCountVector{S, k, T, V}
 
 `A` is the alphabet size,
 `k` is the k-mer size,
 and `T` is the element type of the underlying `counts` field,
 which in turn has type `V`.
 """
-struct KmerCountVector{S, k, T, V} <: AbstractKmerCounts{1, S, k, T, V}
+struct KmerCountVector{S, k, T, V} <: AbstractKmerCountVector{S, k, T, V}
     counts::V
 
     function KmerCountVector{S, k}(counts::V) where {S, k, T <: Real, V <: AbstractVector{T}}
@@ -19,7 +19,6 @@ struct KmerCountVector{S, k, T, V} <: AbstractKmerCounts{1, S, k, T, V}
     end
 end
 
-@inline Base.size(kcv::KmerCountVector) = size(kcv.counts)
 @inline Base.length(kcv::KmerCountVector) = length(kcv.counts)
 @inline Base.getindex(kcv::KmerCountVector, i::Integer) = kcv.counts[i]
 

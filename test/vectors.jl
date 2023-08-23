@@ -1,4 +1,4 @@
-@testset "kmer_count_vec.jl" begin
+@testset "vectors.jl" begin
 
     @testset "AbstractKmerCountMatrix" begin
 

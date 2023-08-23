@@ -1,4 +1,4 @@
-@testset "kmer_count.jl" begin
+@testset "vector.jl" begin
 
     @testset "KmerCountVector" begin
         kc = KmerCountVector{4, 1}([2, 1, 1, 2])
