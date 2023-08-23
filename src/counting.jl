@@ -8,8 +8,7 @@ If `reset` is `true`, the array will be zero-ed before counting.
 function count_kmers! end
 
 function count_kmers!(
-    kcv::KmerCountVector{S, k},
-    sequence::Base.RefValue{Vector{T}};
+    kcv::KmerCountVector{S, k}, sequence::Base.RefValue{Vector{T}};
     reset::Bool = true,
 ) where {S, k, T <: Integer}
     sequence = sequence[]
@@ -34,10 +33,8 @@ function count_kmers!(
 end
 
 function count_kmers!(
-    kcc::KmerCountVectors{D, S, k},
-    sequences::Vector{SequenceType};
-    offset::Integer = 0,
-    reset::Bool = true
+    kcc::KmerCountVectors{D, S, k}, sequences::Vector{SequenceType};
+    offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
     kcv_gen = Iterators.drop(eachvec(kcc), offset)
     for (kcv, sequence) in zip(kcv_gen, sequences)
@@ -48,35 +45,28 @@ end
 
 
 """
-    count_kmers(sequence::Vector{<:Integer}, S, k; zeros_func=zeros, reset=true)
+    count_kmers(sequence::Vector{<:Integer}, S, k; zeros=zeros, reset=true)
 
 This is the default k-mer counting method.
-It create a new S^k-sized vector using `zeros_func` and counts the k-mers in `sequence`.
+It create a new S^k-sized vector using `zeros` and counts the k-mers in `sequence`.
 Since S is the alphabet, and the elements in sequence are integers, the maximum value in `sequence` must be less than `S`
 """
 function count_kmers end
 
 function count_kmers(
-    sequence::SequenceType,
-    S::Integer,
-    k::Integer,
-    T::Type{<:Real} = Int,
-    zeros_func::Function = zeros,
+    sequence::SequenceType, S::Integer, k::Integer;
+    T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
-    kcv = KmerCountVector{S, k}(T, zeros_func)
+    kcv = KmerCountVector{S, k}(T, zeros)
     count_kmers!(kcv, sequence, reset=false)
     kcv
 end
 
 function count_kmers(
-    sequences::Vector{SequenceType},
-    S::Integer,
-    k::Integer,
-    T::Type{<:Real} = Int,
-    zeros_func::Function = zeros,
-    D = 2,
+    sequences::Vector{SequenceType}, S::Integer, k::Integer;
+    T::Type{<:Real} = Int, zeros::Function = zeros, D = 2,
 ) where SequenceType
-    kcvs = KmerCountVectors{D, S, k}(length(sequences), T, zeros_func)
+    kcvs = KmerCountVectors{D, S, k}(length(sequences), T, zeros)
     count_kmers!(kcvs, sequences, reset=false)
     kcvs
 end
@@ -84,15 +74,17 @@ end
 alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
 
 function count_kmers(
-    sequence::SequenceType, k::Integer, T::Type{<:Real} = Int, zeros_func::Function = zeros,
+    sequence::SequenceType, k::Integer;
+    T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
     S = alphabet_size(SequenceType)
-    count_kmers(sequence, S, k, T, zeros_func)
+    count_kmers(sequence, S, k, T=T, zeros=zeros)
 end
 
 function count_kmers(
-    sequences::Vector{SequenceType}, k::Integer, T::Type{<:Real} = Int, zeros_func::Function = zeros,
+    sequences::Vector{SequenceType}, k::Integer;
+    T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
     S = alphabet_size(SequenceType)
-    count_kmers(sequences, S, k, T, zeros_func)
+    count_kmers(sequences, S, k, T=T, zeros=zeros)
 end

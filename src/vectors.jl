@@ -19,9 +19,9 @@ struct KmerCountVectors{D, S, k, T, M} <: AbstractKmerCountMatrix{S, k, T, M}
         new{D, S, k, T, M}(counts)
     end
 
-    function KmerCountVectors{D, S, k}(n::Integer, T::Type{<:Real}=Int, zeros_func::Function=zeros) where {D, S, k}
+    function KmerCountVectors{D, S, k}(n::Integer, T::Type{<:Real}=Int, zeros::Function=zeros) where {D, S, k}
         dims = (D == 1) ? (n, S^k) : (S^k, n)
-        KmerCountVectors{D, S, k}(zeros_func(T, dims))
+        KmerCountVectors{D, S, k}(zeros(T, dims))
     end
 end
 
