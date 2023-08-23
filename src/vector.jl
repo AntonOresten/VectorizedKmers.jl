@@ -14,8 +14,8 @@ struct KmerCountVector{S, k, T, V} <: AbstractKmerCountVector{S, k, T, V}
         new{S, k, T, V}(counts)
     end
 
-    function KmerCountVector{S, k}(T::Type{<:Real}=Int, zeros_func::Function=zeros) where {S, k}
-        KmerCountVector{S, k}(zeros_func(T, S^k))
+    function KmerCountVector{S, k}(; T::Type{<:Real}=Int, zeros::Function=zeros) where {S, k}
+        KmerCountVector{S, k}(zeros(T, S^k))
     end
 end
 

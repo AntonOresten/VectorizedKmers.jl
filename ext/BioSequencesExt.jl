@@ -46,40 +46,6 @@ function VectorizedKmers.count_kmers!(
     kmer_count_vector
 end
 
-function VectorizedKmers.count_kmers(
-    seq::LongDNA,
-    k::Integer,
-    T::Type{<:Real} = Int,
-    zeros_func::Function = zeros,
-)
-    kmer_count_vector = KmerCountVector{4, k}(T, zeros_func)
-    count_kmers!(kmer_count_vector, seq, reset=false)
-    kmer_count_vector
-end
-
-
-function VectorizedKmers.count_kmers!(
-    kmer_count_columns::KmerCountColumns{4, k},
-    sequences::Vector{LongDNA{N}};
-    column_offset::Integer = 0,
-    reset::Bool = true
-) where {k, N}
-    kcv_gen = Iterators.drop(eachvec(kmer_count_columns), column_offset)
-    for (kcv, seq) in zip(kcv_gen, sequences)
-        count_kmers!(kcv, seq, reset=reset)
-    end
-    kmer_count_columns
-end
-
-function VectorizedKmers.count_kmers(
-    sequences::Vector{LongDNA{4}},
-    k::Integer,
-    T::Type{<:Real} = Int,
-    zeros_func::Function = zeros,
-)
-    kmer_count_columns = KmerCountColumns{4, k}(length(sequences), T, zeros_func)
-    count_kmers!(kmer_count_columns, sequences, reset=false)
-    kmer_count_columns
-end
+VectorizedKmers.alphabet_size(::Type{<:LongDNA}) = 4
 
 end
