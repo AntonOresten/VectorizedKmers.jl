@@ -19,9 +19,6 @@ struct KmerCountVector{S, k, T, V} <: AbstractKmerCountVector{S, k, T, V}
     end
 end
 
-@inline Base.length(kcv::KmerCountVector) = length(kcv.counts)
-@inline Base.getindex(kcv::KmerCountVector, i::Integer) = kcv.counts[i]
-
 function Base.summary(kcv::KmerCountVector)
     string(typeof(kcv))
 end

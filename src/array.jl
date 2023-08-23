@@ -33,22 +33,23 @@ const AbstractKmerCountScalar = AbstractKmerCountArray{0}
 const AbstractKmerCountVector = AbstractKmerCountArray{1}
 const AbstractKmerCountMatrix = AbstractKmerCountArray{2}
 
-@inline Base.size(kc::AbstractKmerCountArray) = size(kc.counts)
-@inline Base.getindex(kc::AbstractKmerCountArray, i) = kc.counts[i]
-@inline Base.getindex(kc::AbstractKmerCountArray, i, j) = kc.counts[i, j]
-@inline Base.setindex!(kc::AbstractKmerCountArray, v::Real, i) = kc.counts[i] = v
-@inline Base.setindex!(kc::AbstractKmerCountArray, v::Real, i, j) = kc.counts[i, j] = v
+@inline Base.size(kca::AbstractKmerCountArray) = size(kca.counts)
+@inline Base.length(kca::AbstractKmerCountArray) = length(kca.counts)
+@inline Base.getindex(kca::AbstractKmerCountArray, i) = kca.counts[i]
+@inline Base.getindex(kca::AbstractKmerCountArray, i, j) = kca.counts[i, j]
+@inline Base.setindex!(kca::AbstractKmerCountArray, v::Real, i) = kca.counts[i] = v
+@inline Base.setindex!(kca::AbstractKmerCountArray, v::Real, i, j) = kca.counts[i, j] = v
 @inline get_S(::AbstractKmerCountArray{N, S}) where {N, S} = S
 @inline get_k(::AbstractKmerCountArray{N, S, k}) where {N, S, k} = k
-@inline counts(kc::AbstractKmerCountArray) = kc.counts
-@inline zeros!(kc::AbstractKmerCountArray) = fill!(kc.counts, zero(eltype(kc)))
+@inline counts(kca::AbstractKmerCountArray) = kca.counts
+@inline zeros!(kca::AbstractKmerCountArray) = fill!(kca.counts, zero(eltype(kca)))
 
-Base.hash(kc::AbstractKmerCountArray, h::UInt) = hash(typeof(kc), hash(kc.counts, h))
+Base.hash(kca::AbstractKmerCountArray, h::UInt) = hash(typeof(kca), hash(kca.counts, h))
 
-function Base.:(==)(kc1::AbstractKmerCountArray, kc2::AbstractKmerCountArray)
+function Base.:(==)(kca1::AbstractKmerCountArray, kca2::AbstractKmerCountArray)
     all((
-        get_S(kc1) == get_S(kc2),
-        kc1.counts == kc2.counts,
-        typeof(kc1) == typeof(kc2) || typeof(kc1.counts) != typeof(kc2.counts), 
+        get_S(kca1) == get_S(kca2),
+        kca1.counts == kca2.counts,
+        typeof(kca1) == typeof(kca2) || typeof(kca1.counts) != typeof(kca2.counts), 
     ))
 end
