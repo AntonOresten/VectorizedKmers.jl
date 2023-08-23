@@ -12,7 +12,7 @@ if CUDA.functional()
         @test collect(kcc[1]) == [0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]
         @test collect(kcc[2]) == [0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0]
 
-        count_kmers!(kcc, [dna"ACGTACGT"], column_offset=1, reset=false)
+        count_kmers!(kcc, [dna"ACGTACGT"], offset=1, reset=false)
         @test collect(kcc[2]) == [0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0] .* 2
 
         @test collect(kcc[3]) == zeros(Int, 16)

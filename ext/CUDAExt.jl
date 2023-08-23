@@ -24,7 +24,7 @@ function VectorizedKmers.count_kmers!(
     kmer_count_columns::KmerCountColumns{4, k, T, M},
     sequences::CuMatrix{UInt8},
     seq_lengths::Union{Missing, CuVector{Int}} = missing;
-    column_offset::Int = 0,
+    offset::Int = 0,
     reset::Bool = true,
 ) where {k, T, M <: CuMatrix{T}}
     counts = kmer_count_columns.counts
@@ -34,7 +34,7 @@ function VectorizedKmers.count_kmers!(
     seq_lengths = ismissing(seq_lengths) ? CUDA.fill(max_seq_len, num_seqs) : seq_lengths
 
     @assert length(kmer_count_columns) >= num_seqs "The k-mer counts of $num_seqs sequences would not fit in $(length(kmer_count_columns)) columns."
-    @assert length(kmer_count_columns) - column_offset >= num_seqs "The column offset is too high. The sequences don't fit."
+    @assert length(kmer_count_columns) - offset >= num_seqs "The column offset is too high. The sequences don't fit."
     @assert length(seq_lengths) == num_seqs "The length of the seq_lengths vector ($(length(seq_lengths))) does not match the number of sequences ($num_seqs)."
     @assert maximum(seq_lengths) <= max_seq_len "The maximum sequence length provided ($(maximum(seq_lengths))) is higher than the size of the sequences matrix ($max_seq_len)."
     max_seq_len > k-1 || @warn "All sequences are shorter than k. No k-mers will be counted."
@@ -45,7 +45,7 @@ function VectorizedKmers.count_kmers!(
         seq_idx = (blockIdx().x - 1) * blockDim().x + threadIdx().x
 
         @inbounds if seq_idx <= num_seqs
-            count_vector = view(counts, :, seq_idx + column_offset)
+            count_vector = view(counts, :, seq_idx + offset)
             sequence = view(sequences, :, seq_idx)
 
             kmer = zero(UInt64)
