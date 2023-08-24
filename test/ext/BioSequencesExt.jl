@@ -6,8 +6,14 @@ using BioSequences
 
         @testset "Single sequences" begin
             @test count_kmers(dna"ACGT", 1).counts == [1, 1, 1, 1]
+            @test count_kmers(rna"ACGU", 1).counts == [1, 1, 1, 1]
+            @test count_kmers(view(dna"ACGT", 1:3), 1).counts == [1, 1, 1, 0]
+            @test count_kmers(view(rna"ACGU", 2:4), 1).counts == [0, 1, 1, 1]
             @test count_kmers(dna"ACGT", 1) == count_kmers(dna"ACGT", 1, UInt)
             @test count_kmers(dna"ACGT", 1) == count_kmers(LongDNA{2}(dna"ACGT"), 1)
+
+            @test count_kmers(view(LongDNA{2}(dna"A"^32*dna"T"), 33:33), 1) == [0, 0, 0, 1]
+            @test count_kmers(view(dna"A"^16*dna"T", 17:17), 1) == [0, 0, 0, 1]
 
             kc = KmerCountVector{4, 1}()
             @test count_kmers!(kc, dna"ACGT").counts == [1, 1, 1, 1]
