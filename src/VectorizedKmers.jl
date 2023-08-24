@@ -6,6 +6,7 @@ export
     get_S,
     get_k,
     counts,
+    zeros!,
 
     # Vector
     AbstractKmerCountVector,
