@@ -9,7 +9,7 @@ function count_kmers! end
 
 # This method is used for testing.
 # sequence is wrapped by RefValue cause otherwise it gets mistaken for a vector of sequences.
-function count_kmers!(
+@inline function count_kmers!(
     kcv::KmerCountVector{S, k}, sequence::Base.RefValue{Vector{T}};
     reset::Bool = true,
 ) where {S, k, T <: Integer}
@@ -33,7 +33,7 @@ function count_kmers!(
     kcv
 end
 
-function count_kmers!(
+@inline function count_kmers!(
     kcc::KmerCountVectors{D, S, k}, sequences::Vector{SequenceType};
     offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
@@ -54,7 +54,7 @@ Since S is the alphabet, and the elements in sequence are integers, the maximum 
 """
 function count_kmers end
 
-function count_kmers(
+@inline function count_kmers(
     sequence::SequenceType, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
@@ -63,7 +63,7 @@ function count_kmers(
     kcv
 end
 
-function count_kmers(
+@inline function count_kmers(
     sequences::Vector{SequenceType}, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros, D = 2,
 ) where SequenceType
@@ -74,7 +74,7 @@ end
 
 alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
 
-function count_kmers(
+@inline function count_kmers(
     sequence::SequenceType, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
@@ -82,7 +82,7 @@ function count_kmers(
     count_kmers(sequence, S, k, T=T, zeros=zeros)
 end
 
-function count_kmers(
+@inline function count_kmers(
     sequences::Vector{SequenceType}, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
