@@ -6,6 +6,9 @@ using VectorizedKmers, CUDA
 # store kmer count vectors in columns, and transpose when taking matmul
 # store sequences in columns 
 
+# maybe not needed?
+#@inline zeros!(kca::AbstractKmerCountArray{N, S, k, T, A <: CuArray}) where {N, S, k, T, A} = CUDA.fill!(kca.counts, zero(eltype(kca)))
+
 """
     count_kmers!(kcc::KmerCountColumns{4, k, T, CuMatrix{T}}, sequences::CuMatrix{UInt8})
 

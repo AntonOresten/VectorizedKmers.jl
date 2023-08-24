@@ -14,10 +14,10 @@ Abstract type representing k-mer count in N-dimensional arrays. This type serves
 The order of the type parameters is purposefully chosen based on the logical importance of comparisons:
 
 1. `N`: Dimensionality is paramount. Types with differing dimensions cannot be compared directly. They would somehow
-    need to be transformed to the same dimension.
-2. `S`: Alphabet size is crucial. It's nonsensical to compare types with distinct alphabet sizes, even if k-mer sizes 
-   and other attributes are the same.
-3. `k`: k-mer size is the next important characteristic. Types with varying k-mer sizes shouldn't be directly compared 
+   need to be transformed to the same dimension.
+2. `S`: Alphabet size is a crucial differentiator. It's nonsensical to compare types with distinct alphabet sizes,
+   even if k-mer sizes and other attributes are the same.
+3. `k`: k-mer size is the next important type parameter. Types with varying k-mer sizes shouldn't be directly compared 
    even if they share other attributes.
 4. `T`: Element type might imply certain transformations or states (e.g., normalization when using floats). Types with 
    different element types can have distinct implications and hence shouldn't be equated.
