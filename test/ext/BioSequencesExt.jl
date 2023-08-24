@@ -6,6 +6,7 @@ using BioSequences
 
         @testset "Single sequences" begin
             @test count_kmers(dna"ACGT", 1).counts == [1, 1, 1, 1]
+            @test count_kmers(dna"ACGT", 1) == count_kmers(dna"ACGT", 1, UInt)
             @test count_kmers(dna"ACGT", 1) == count_kmers(LongDNA{2}(dna"ACGT"), 1)
 
             kc = KmerCountVector{4, 1}()

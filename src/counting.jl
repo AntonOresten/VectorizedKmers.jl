@@ -91,4 +91,4 @@ end
 end
 
 # for backward compatibility
-@inline count_kmers(seq, k::Integer, T::Type{<:Real}; zeros::Function=zeros) = count_kmers(seq, k, T=T, zeros=zeros)
+@inline count_kmers(seq, k::Integer, T::Type{<:Real}, zeros::Function=zeros) = count_kmers(seq, k, T=T, zeros=zeros)
