@@ -38,7 +38,7 @@ end
     offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
     kcv_gen = Iterators.drop(eachvec(kcc), offset)
-    for (kcv, sequence) in zip(kcv_gen, sequences)
+    for (kcv, sequence) in zip(kcv_gen, sequences) # TODO: parallelize; may need to collect iterator or do iterate through both with indices and check bounds and shit
         count_kmers!(kcv, sequence, reset=reset)
     end
     kcc
