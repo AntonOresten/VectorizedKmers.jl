@@ -14,17 +14,15 @@ VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
     reset && VectorizedKmers.zeros!(kmer_count_vector)
     counts = kmer_count_vector.counts
     len = length(sequence)
-    mask = UInt(1) << 2k - 1
+    len < k && return kmer_count_vector
+    mask = UInt(4^k - 1)
     kmer = UInt(0)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, len)
+    data_start, data_stop = (start - 1) ÷ 32 + 1, (stop - 1) ÷ 32 + 1
     first_count_index = k + start - 1
-    i = 0
-    @inbounds for data_int in sequence.data
-        if i + 32 < start
-            i += 32
-            continue
-        end
-        for j in 0:2:63
+    i = 32 * (data_start - 1)
+    @inbounds for data_int in @view sequence.data[data_start:data_stop]
+        for j in 0:2:63 # could maybe do some SIMD shit on middle k-mers
             i += 1
             i < start && continue
             i > stop && break
@@ -43,17 +41,15 @@ end
     reset && VectorizedKmers.zeros!(kmer_count_vector)
     counts = kmer_count_vector.counts
     len = length(sequence)
-    mask = UInt(1) << 2k - 1
+    len < k && return kmer_count_vector
+    mask = UInt(4^k - 1)
     kmer = UInt(0)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, len)
+    data_start, data_stop = (start - 1) ÷ 16 + 1, (stop - 1) ÷ 16 + 1
     first_count_index = k + start - 1
-    i = 0
-    @inbounds for data_int in sequence.data
-        if i + 16 < start
-            i += 16
-            continue
-        end
-        for j in 0:4:63 # could maybe do some SIMD shit on middle k-mers
+    i = 16 * (data_start - 1)
+    @inbounds for data_int in @view sequence.data[data_start:data_stop]
+        for j in 0:4:63
             i += 1
             i < start && continue
             i > stop && break

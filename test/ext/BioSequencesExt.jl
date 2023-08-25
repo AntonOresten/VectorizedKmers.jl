@@ -20,6 +20,9 @@ using BioSequences
 
             kc = KmerCountVector{4, 2}()
             @test count_kmers!(kc, dna"ACGT").counts == [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+
+            seq = randdnaseq(100)
+            @test all([count_kmers(seq[i:j], 5) == count_kmers(view(seq, i:j), 5) for i in 1:100, j in 1:100])
         end
 
         @testset "Multiple sequences" begin
