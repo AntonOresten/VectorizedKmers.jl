@@ -1,7 +1,7 @@
 """
-    count_kmers!(kmer_count_vector, sequence)
+    count_kmers!(kmer_vector, sequence)
 
-Mutates `kmer_count_vector`.
+Mutates `kmer_vector`.
 
 If `reset` is `true`, the array will be zero-ed before counting.
 """
@@ -10,14 +10,14 @@ function count_kmers! end
 # This method is used for testing.
 # sequence is wrapped by RefValue cause otherwise it gets mistaken for a vector of sequences.
 @inline function count_kmers!(
-    kcv::KmerCountVector{S, k}, sequence::Base.RefValue{Vector{T}};
+    kv::KmerVector{S, k}, sequence::Base.RefValue{Vector{T}};
     reset::Bool = true,
 ) where {S, k, T <: Integer}
     sequence = sequence[]
     @assert 0 <= maximum(sequence) < S
-    reset && zeros!(kcv)
-    length(sequence) < k && return kcv
-    counts = kcv.counts
+    reset && zeros!(kv)
+    length(sequence) < k && return kv
+    values = kv.values
     mask = unsigned(S^k)
 
     kmer = zero(UInt)
@@ -27,21 +27,21 @@ function count_kmers! end
 
     for m in view(sequence, k:length(sequence))
         kmer = kmer * S % mask + m
-        counts[kmer + 1] += 1
+        values[kmer + 1] += 1
     end
 
-    kcv
+    kv
 end
 
 @inline function count_kmers!(
-    kcc::KmerCountVectors{D, S, k}, sequences::Vector{SequenceType};
+    kvs::KmerVectors{D, S, k}, sequences::Vector{SequenceType};
     offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
-    kcv_gen = Iterators.drop(eachvec(kcc), offset)
-    for (kcv, sequence) in zip(kcv_gen, sequences) # TODO: parallelize; may need to collect iterator or do iterate through both with indices and check bounds and shit
-        count_kmers!(kcv, sequence, reset=reset)
+    kv_gen = Iterators.drop(eachvec(kvs), offset)
+    for (kv, sequence) in zip(kv_gen, sequences) # TODO: parallelize; may need to collect iterator or do iterate through both with indices and check bounds and shit
+        count_kmers!(kv, sequence, reset=reset)
     end
-    kcc
+    kvs
 end
 
 
@@ -58,18 +58,18 @@ function count_kmers end
     sequence::SequenceType, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
-    kcv = KmerCountVector{S, k}(T=T, zeros=zeros)
-    count_kmers!(kcv, sequence, reset=false)
-    kcv
+    kv = KmerVector{S, k}(T=T, zeros=zeros)
+    count_kmers!(kv, sequence, reset=false)
+    kv
 end
 
 @inline function count_kmers(
     sequences::Vector{SequenceType}, S::Integer, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros, D = 2,
 ) where SequenceType
-    kcvs = KmerCountVectors{D, S, k}(length(sequences), T=T, zeros=zeros)
-    count_kmers!(kcvs, sequences, reset=false)
-    kcvs
+    kvs = KmerVectors{D, S, k}(length(sequences), T=T, zeros=zeros)
+    count_kmers!(kvs, sequences, reset=false)
+    kvs
 end
 
 alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")

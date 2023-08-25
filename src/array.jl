@@ -1,5 +1,5 @@
 """
-    AbstractKmerCountArray{N, S, k, T <: Real, A <: AbstractArray{T, N}} <: AbstractArray{T, N}
+    AbstractKmerArray{N, S, k, T <: Real, A <: AbstractArray{T, N}} <: AbstractArray{T, N}
 
 Abstract type representing k-mer count in N-dimensional arrays. This type serves as the foundation for various concrete k-mer count structures.
 
@@ -27,29 +27,24 @@ The order of the type parameters is purposefully chosen based on the logical imp
 This order ensures that the most significant distinctions between types are made first, allowing for more meaningful
 and nuanced comparisons.
 """
-abstract type AbstractKmerCountArray{N, S, k, T <: Real, A <: AbstractArray{T, N}} <: AbstractArray{T, N} end
+abstract type AbstractKmerArray{N, S, k, T <: Real, A <: AbstractArray{T, N}} <: AbstractArray{T, N} end
 
-const AbstractKmerCountScalar = AbstractKmerCountArray{0}
-const AbstractKmerCountVector = AbstractKmerCountArray{1}
-const AbstractKmerCountMatrix = AbstractKmerCountArray{2}
+const AbstractKmerVector = AbstractKmerArray{1}
+const AbstractKmerMatrix = AbstractKmerArray{2}
 
-@inline Base.size(kca::AbstractKmerCountArray) = size(kca.counts)
-@inline Base.length(kca::AbstractKmerCountArray) = length(kca.counts)
-@inline Base.getindex(kca::AbstractKmerCountArray, i) = kca.counts[i]
-@inline Base.getindex(kca::AbstractKmerCountArray, i, j) = kca.counts[i, j]
-@inline Base.setindex!(kca::AbstractKmerCountArray, v::Real, i) = kca.counts[i] = v
-@inline Base.setindex!(kca::AbstractKmerCountArray, v::Real, i, j) = kca.counts[i, j] = v
-@inline get_S(::AbstractKmerCountArray{N, S}) where {N, S} = S
-@inline get_k(::AbstractKmerCountArray{N, S, k}) where {N, S, k} = k
-@inline counts(kca::AbstractKmerCountArray) = kca.counts
-@inline zeros!(kca::AbstractKmerCountArray) = fill!(kca.counts, zero(eltype(kca)))
+@inline Base.size(ka::AbstractKmerArray) = size(ka.values)
+@inline Base.length(ka::AbstractKmerArray) = length(ka.values)
+@inline Base.getindex(ka::AbstractKmerArray, i) = ka.values[i]
+@inline Base.getindex(ka::AbstractKmerArray, i, j) = ka.values[i, j]
+@inline Base.setindex!(ka::AbstractKmerArray, v::Real, i) = ka.values[i] = v
+@inline Base.setindex!(ka::AbstractKmerArray, v::Real, i, j) = ka.values[i, j] = v
+@inline get_S(::AbstractKmerArray{N, S}) where {N, S} = S
+@inline get_k(::AbstractKmerArray{N, S, k}) where {N, S, k} = k
+@inline zeros!(ka::AbstractKmerArray) = fill!(ka.values, zero(eltype(ka)))
 
-Base.hash(kca::AbstractKmerCountArray, h::UInt) = hash(typeof(kca), hash(kca.counts, h))
+# also see the ::KmerVectors{D} method in src\vectors.jl
+Base.hash(ka::AbstractKmerArray, h::UInt) = hash(get_S(ka), hash(ka.values, h))
 
-function Base.:(==)(kca1::AbstractKmerCountArray, kca2::AbstractKmerCountArray)
-    all((
-        get_S(kca1) == get_S(kca2),
-        kca1.counts == kca2.counts,
-        typeof(kca1) == typeof(kca2) || typeof(kca1.counts) != typeof(kca2.counts), 
-    ))
+function Base.:(==)(ka1::AbstractKmerArray, ka2::AbstractKmerArray)
+   hash(ka1) == hash(ka2)
 end

@@ -1,22 +1,21 @@
 module VectorizedKmers
 
 export
-    # AbstractKmerCountArray
-    AbstractKmerCountArray,
+    # AbstractKmerArray
+    AbstractKmerArray,
     get_S,
     get_k,
-    counts,
     zeros!,
 
     # Vector
-    AbstractKmerCountVector,
-    KmerCountVector,
+    AbstractKmerVector,
+    KmerVector,
 
     # Matrix
-    AbstractKmerCountMatrix,
-    KmerCountVectors,
-    KmerCountColumns,
-    KmerCountRows,
+    AbstractKmerMatrix,
+    KmerVectors,
+    KmerColumns,
+    KmerRows,
     eachvec,
 
     # counting
