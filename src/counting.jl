@@ -49,7 +49,7 @@ end
     count_kmers(sequence::Vector{<:Integer}, S, k; zeros=zeros, reset=true)
 
 This is the default k-mer counting method.
-It create a new S^k-sized vector using `zeros` and counts the k-mers in `sequence`.
+It creates a new S^k-sized vector using `zeros` and counts the k-mers in `sequence`.
 Since S is the alphabet, and the elements in sequence are integers, the maximum value in `sequence` must be less than `S`
 """
 function count_kmers end

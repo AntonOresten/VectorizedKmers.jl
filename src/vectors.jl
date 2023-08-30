@@ -1,8 +1,10 @@
 """
     KmerVectors
 
-A container for k-mer counts, where k-mer counts are stored together as columns or rows in a matrix.
-It is more efficient to store k-mer counts as columns in a matrix, since the elements in a column are contiguous in memory.
+A container for k-mer vectors, where the values are stored together as columns or rows in a matrix.
+
+!!! note
+    It might be more efficient to store the values as columns in a matrix, since the elements in a column are contiguous in memory.
 
 `D` is the dimension of the matrix in which the vectors are next to each other (1 for rows, 2 for columns).
 `S` is the alphabet size,
