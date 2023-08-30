@@ -1,7 +1,7 @@
 name = "VectorizedKmers"
 uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
 authors = ["Anton O. Sollman"]
-version = "0.5.1"
+version = "0.6.0"
 
 [deps]
 
