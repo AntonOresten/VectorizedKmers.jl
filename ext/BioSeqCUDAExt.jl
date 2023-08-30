@@ -5,14 +5,14 @@ using VectorizedKmers, BioSequences, CUDA
 @inline data_length(seq::LongDNA{4}) = length(seq.data) 
 
 function VectorizedKmers.count_kmers!(
-    kmer_count_columns::KmerCountColumns{4, k, T, M},
+    kmer_columns::KmerColumns{4, k, T, M},
     sequences::Vector{LongDNA{4}};
     offset::Integer = 0,
     reset::Bool = true,
 ) where {k, T, M <: CuMatrix{T}}
-    counts = kmer_count_columns.counts
-    reset && CUDA.fill!(counts, 0)
-    isempty(sequences) && return kmer_count_columns
+    values = kmer_columns.values
+    reset && CUDA.fill!(values, 0)
+    isempty(sequences) && return kmer_columns
 
     num_seqs = length(sequences)
 
@@ -31,12 +31,12 @@ function VectorizedKmers.count_kmers!(
 
     data_matrix = CuMatrix(data_matrix_h)
 
-    @assert length(kmer_count_columns) >= num_seqs "The k-mer counts of $num_seqs sequences would not fit in $(length(kmer_count_columns)) columns."
-    @assert length(kmer_count_columns) - offset >= num_seqs "The column offset is too high. The sequences don't fit."
+    @assert length(kmer_columns) >= num_seqs "The k-mer counts of $num_seqs sequences would not fit in $(length(kmer_columns)) columns."
+    @assert length(kmer_columns) - offset >= num_seqs "The column offset is too high. The sequences don't fit."
     max_seq_len > k-1 || @warn "All sequences are shorter than k. No k-mers will be counted."
 
     function count_kmers_column!(
-        counts,
+        values,
         data_matrix,
         seq_lengths,
         num_seqs,
@@ -51,7 +51,7 @@ function VectorizedKmers.count_kmers!(
             seq_length = seq_lengths[seq_idx]
             data_length = data_lengths[seq_idx]
 
-            count_vector = view(counts, :, seq_idx + offset)
+            count_vector = view(values, :, seq_idx + offset)
             data_vector = view(data_matrix, 1:data_length-1, seq_idx)
 
             kmer = UInt(0)
@@ -80,9 +80,9 @@ function VectorizedKmers.count_kmers!(
     blocks = ceil(Int, num_seqs / threads)
 
     @cuda threads=threads blocks=blocks count_kmers_column!(
-        counts, data_matrix, seq_lengths, num_seqs, k, mask, data_lengths, offset)
+        values, data_matrix, seq_lengths, num_seqs, k, mask, data_lengths, offset)
 
-    kmer_count_columns
+    kmer_columns
 end
 
 end
