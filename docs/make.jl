@@ -17,7 +17,6 @@ makedocs(;
             "Vectors of k-mer counts" => "kmer_vector.md",
             "Matrices of k-mers counts" => "kmer_matrix.md",
         ],
-        ],
         "API Reference" => "references.md",
     ],
     authors = "Anton O. Sollman",
