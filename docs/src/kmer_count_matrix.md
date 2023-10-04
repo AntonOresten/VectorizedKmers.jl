@@ -27,7 +27,7 @@ julia> kc = KmerColumns{4, k}(n)
 We can create a generator of `KmerVector`s using `eachvec`, and collect it to get a vector of `KmerVector`s.
 
 ```jldoctest
-julia> collect(eachvec(kc))
+julia> collect(VectorizedKmers.eachvec(kc))
 3-element Vector{KmerVector{4, 1, Int64, SubArray{Int64, 1, Matrix{Int64}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}}}:
  KmerVector{4, 1, Int64, SubArray{Int64, 1, Matrix{Int64}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}}([0, 0, 0, 0])
  KmerVector{4, 1, Int64, SubArray{Int64, 1, Matrix{Int64}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}}([0, 0, 0, 0])
@@ -73,7 +73,3 @@ julia> count_kmers!(kc, [dna"ACGT", dna"ATAT"], offset=1)
  1  1  0
  2  1  2
 ```
-
-Splendid!
-
-Although easy to visualize, 1-mer-counts of short DNA sequences are not very interesting, and are also not very useful...

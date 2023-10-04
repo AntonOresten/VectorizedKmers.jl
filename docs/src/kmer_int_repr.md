@@ -34,7 +34,7 @@ function kmer_to_int(kmer::String)
     for char in kmer
         kmer_int = (kmer_int << 2) | DNA_ENCODING_VECTOR[char % Int8]
     end
-    kmer_int
+    return kmer_int
 end
 
 # or if you're into code golf:
@@ -42,9 +42,9 @@ f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]
 ```
 
 !!! note
-    If you care about performance, you should use other types like `LongDNA{4}` instead of `String`. A lot of operations on strings take linear time, whereas they're constant time for `LongDNA{4}`. This includes accessing substrings like k-mers.
+    Consider using types like `BioSequences.LongDNA{4}` instead of `String`, as strings are not optimized for performance.
 
-This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation stuff), since we're convert each k-mer individually, instead of having some kind of sliding window. Moreover, the function takes the k-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
+This function would not be very efficient in a practical setting (even though we're using super cool bit manipulation), since we're convert each k-mer individually, instead of having some kind of sliding window. Moreover, the function takes the k-mer in the form of a `String`, which is not ideal. The function should work as intended, though. Let's test it:
 
 ```jldoctest
 julia> kmer_to_int("GATTACA")
@@ -56,7 +56,7 @@ julia> f("GATTACA")
 
 ## Amino acid sequences
 
-Amino acid sequences are a little more difficult to deal with since there are a lot more of them, and the vectors would grow in size even quicker. However, we can still represent them as integers, although we can't use bit manipulation anymore.
+Amino acid sequences are a little more difficult to deal with since we have multiple reading frames, and since the alphabet is much larger, the vectors grow in size much quicker as $k$ increases. However, we can still represent them as integers, like we did with DNA in the form of Strings, just without the fancy-looking bit-manipulation.
 
 BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
 
@@ -79,11 +79,11 @@ julia> reinterpret.(Int8, [AA_A, AA_M, AA_I, AA_N, AA_O])
  20
 ```
 
-We can use this to convert amino acid sequences to integers, like we did with DNA in the form of Strings, but without the fancy bit manipulation stuff.
-
 Let's say we want to convert the amino acid sequence `AMINO` to an integer. As seen above, the amino acids in the sequence have values of `0`, `12`, `9`, `2`, and `20` respectively. Thus, the integer value of the k-mer should be:
 
-$0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556$
+$$
+0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556
+$$
 
 We can write a function for this:
 
@@ -103,5 +103,3 @@ To test it, we can use the `aa"..."` string macro to create a `LongAA` instance:
 julia> kmer_to_int(aa"AMINO")
 270556
 ```
-
-Marvelous!

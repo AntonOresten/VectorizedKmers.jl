@@ -13,7 +13,7 @@
             kcs[1, 1] = 1
             @test kcs[1, 1] == 1
             @test eachcol(kcs)[1] == kcs[1].values
-            @test first(eachvec(kcs)) == kcs[1]
+            @test first(VectorizedKmers.eachvec(kcs)) == kcs[1]
         end
 
         @testset "KmerRows" begin
@@ -27,7 +27,7 @@
             krs[1, 1] = 1
             @test krs[1, 1] == 1
             @test eachrow(krs)[1] == krs[1].values
-            @test first(eachvec(krs)) == krs[1]
+            @test first(VectorizedKmers.eachvec(krs)) == krs[1]
         end
 
     end
