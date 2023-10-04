@@ -15,7 +15,7 @@ which in turn has type `V`.
 struct KmerVectors{D, S, k, T, M} <: AbstractKmerMatrix{S, k, T, M}
     values::M
 
-    function KmerVectors{D, S, k}(values::M) where {D, S, k, T <: Real, M <: AbstractMatrix{T}}
+    function KmerVectors{D, S, k}(values::M) where {D, S, k, T, M <: AbstractMatrix{T}}
         @assert D isa Integer && 1 <= D <= 2 "Type parameter `D` must be an integer between 1 and 2."
         @assert size(values, 3-D) == S^k
         return new{D, S, k, T, M}(values)

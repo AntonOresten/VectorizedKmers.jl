@@ -7,10 +7,10 @@ const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}}, LongSubSe
 VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
 
 @inline function VectorizedKmers.count_kmers!(
-    kmer_vector::KmerVector{4, k},
+    kmer_vector::KmerVector{4, k, T, A},
     sequence::LongNucOrView{2};
     reset::Bool = true,
-) where k
+) where {k, T, A <: AbstractVector{T}}
     reset && VectorizedKmers.zeros!(kmer_vector)
     values = kmer_vector.values
     len = length(sequence)
@@ -34,10 +34,10 @@ VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
 end
 
 @inline function VectorizedKmers.count_kmers!(
-    kmer_vector::KmerVector{4, k},
+    kmer_vector::KmerVector{4, k, T, A},
     sequence::LongNucOrView{4};
     reset::Bool = true,
-) where k
+) where {k, T, A <: AbstractVector{T}}
     reset && VectorizedKmers.zeros!(kmer_vector)
     values = kmer_vector.values
     len = length(sequence)

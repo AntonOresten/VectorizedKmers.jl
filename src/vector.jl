@@ -9,7 +9,7 @@ which in turn has type `V`.
 struct KmerVector{S, k, T, V} <: AbstractKmerVector{S, k, T, V}
     values::V
 
-    function KmerVector{S, k}(values::V) where {S, k, T <: Real, V <: AbstractVector{T}}
+    function KmerVector{S, k}(values::V) where {S, k, T, V <: AbstractVector{T}}
         @assert length(values) == S^k
         return new{S, k, T, V}(values)
     end
