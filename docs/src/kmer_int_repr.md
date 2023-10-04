@@ -22,7 +22,7 @@ Consider the DNA sequence `GATTACA`. If we convert it to an integer using the ta
 
 Writing a function for this might look like the following:
 
-```jldoctest
+```julia
 const DNA_ENCODING_VECTOR = zeros(UInt, 127)
 
 for (i, char) in enumerate("ACGT")
@@ -34,7 +34,7 @@ function kmer_to_int(kmer::String)
     for char in kmer
         kmer_int = (kmer_int << 2) | DNA_ENCODING_VECTOR[char % Int8]
     end
-    kmer_int
+    return kmer_int
 end
 
 # or if you're into code golf:
@@ -87,7 +87,7 @@ $$
 
 We can write a function for this:
 
-```jldoctest
+```julia
 function kmer_to_int(kmer::LongAA)
     kmer_int = zero(UInt)
     for aa in kmer
