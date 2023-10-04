@@ -28,6 +28,4 @@ const AbstractKmerMatrix = AbstractKmerArray{2}
 # also see the ::KmerVectors{D} method in src/vectors.jl
 Base.hash(ka::AbstractKmerArray, h::UInt) = hash(get_S(ka), hash(ka.values, h))
 
-function Base.:(==)(ka1::AbstractKmerArray, ka2::AbstractKmerArray)
-   hash(ka1) == hash(ka2)
-end
+Base.:(==)(ka1::AbstractKmerArray, ka2::AbstractKmerArray) = hash(ka1) == hash(ka2)

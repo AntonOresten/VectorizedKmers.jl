@@ -2,11 +2,7 @@ module CUDAExt
 
 using VectorizedKmers, CUDA
 
-# transpose doesn't copy?
 # store kmer count vectors in columns, and transpose for matmul
-
-# maybe not needed?
-#@inline zeros!(ka::AbstractKmerArray{N, S, k, T, A <: CuArray}) where {N, S, k, T, A} = CUDA.fill!(ka.values, zero(eltype(ka)))
 
 """
     count_kmers!(kc::KmerColumns{4, k, T, CuMatrix{T}}, sequences::CuMatrix{UInt8})

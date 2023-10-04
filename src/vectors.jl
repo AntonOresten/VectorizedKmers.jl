@@ -43,5 +43,6 @@ end
     return KmerVector{S, k}(view(kcs.values, :, i))
 end
 
+# could make a proper type for this that isn't just a generator
 @inline _eachvec_iter(kvs::KmerVectors{D}) where D = (D == 1) ? eachrow(kvs.values) : eachcol(kvs.values)
 @inline eachvec(kvs::KmerVectors{D, S, k}) where {D, S, k} = (KmerVector{S, k}(v) for v in _eachvec_iter(kvs))

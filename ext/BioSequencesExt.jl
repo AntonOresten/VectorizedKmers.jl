@@ -22,9 +22,8 @@ VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
     first_count_index = k + start - 1
     i = 32 * (data_start - 1)
     @inbounds for data_int in @view sequence.data[data_start:data_stop]
-        for j in 0:2:63 # could maybe do some SIMD shit on middle k-mers
+        for j in 0:2:63
             i += 1
-            i < start && continue
             i > stop && break
             kmer = ((kmer << 2) & mask) | ((data_int >> j) & 0b11)
             values[kmer + 1] += first_count_index <= i
@@ -51,7 +50,6 @@ end
     @inbounds for data_int in @view sequence.data[data_start:data_stop]
         for j in 0:4:63
             i += 1
-            i < start && continue
             i > stop && break
             kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)
             values[kmer + 1] += first_count_index <= i

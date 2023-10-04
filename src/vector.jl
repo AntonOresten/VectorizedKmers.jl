@@ -26,13 +26,9 @@ function Base.show(io::IO, kv::KmerVector)
     len_values = length(kv.values)
     
     print(io, summary(kv) * "([")
-
-    if len_values <= max_elements_to_show
-        print(io, join(kv.values, ", "))
-    else
-        print(io, join(view(kv.values, 1:max_elements_to_show), ", "), " … (", len_values - max_elements_to_show, " more)")
-    end
-
+    elements_to_show = min(len_values, max_elements_to_show)
+    print(io, join(kv.values[1:elements_to_show], ", "))
+    elements_to_show < len_values && print(io, " … (", len_values - max_elements_to_show, " more)")
     print(io, "])")
 
     return nothing

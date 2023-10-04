@@ -20,6 +20,7 @@ function VectorizedKmers.count_kmers!(
     max_seq_len = maximum(seq_lengths_h)
     seq_lengths = CuVector(seq_lengths_h)
 
+    # data vector length could be calculated with (seq_len - 1) ÷ 16 + 1
     data_lengths_h = data_length.(sequences)
     max_data_length = maximum(data_lengths_h)
     data_lengths = CuVector(data_lengths_h)
@@ -64,7 +65,8 @@ function VectorizedKmers.count_kmers!(
                 end
             end
 
-            data_int = data_vector[data_length]
+            # TODO: make sure this works correctly. it's not tested.
+            data_int = data_matrix[data_length, seq_idx]
             for j in 0:4:(4 * ((seq_length - 1) % 16 + 1) - 1)
                 i += 1
                 kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)

@@ -1,5 +1,5 @@
 """
-    count_kmers!(kmer_vector, sequence)
+    count_kmers!(kmer_vector, sequence; reset=true)
 
 Mutates `kmer_vector`.
 
@@ -17,19 +17,15 @@ function count_kmers! end
     @assert 0 <= maximum(sequence) < S
     reset && zeros!(kv)
     length(sequence) < k && return kv
-    values = kv.values
-    mask = unsigned(S^k)
-
-    kmer = zero(UInt)
-    for m in view(sequence, 1:k-1)
+    mask = S^k
+    kmer = zero(T)
+    for m in @view sequence[1:k-1]
         kmer = kmer * S + m
     end
-
-    for m in view(sequence, k:length(sequence))
+    for m in @view sequence[k:end]
         kmer = kmer * S % mask + m
-        values[kmer + 1] += 1
+        kv.values[kmer + 1] += 1
     end
-
     return kv
 end
 
@@ -38,7 +34,7 @@ end
     offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
     kv_gen = Iterators.drop(eachvec(kvs), offset)
-    for (kv, sequence) in zip(kv_gen, sequences) # TODO: parallelize; may need to collect iterator or do iterate through both with indices and check bounds and shit
+    for (kv, sequence) in zip(kv_gen, sequences)
         count_kmers!(kv, sequence, reset=reset)
     end
     return kvs
@@ -46,10 +42,9 @@ end
 
 
 """
-    count_kmers(sequence::Vector{<:Integer}, S, k; zeros=zeros, reset=true)
+    count_kmers(sequence, S, k; T=Int, zeros=zeros)
 
-This is the default k-mer counting method.
-It creates a new S^k-sized vector using `zeros` and counts the k-mers in `sequence`.
+Creates a new S^k-sized vector using the supplied `zeros` function and counts the k-mers in `sequence`.
 Since S is the alphabet, and the elements in sequence are integers, the maximum value in `sequence` must be less than `S`
 """
 function count_kmers end
@@ -72,7 +67,10 @@ end
     return kvs
 end
 
-alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
+
+function alphabet_size(T)
+    error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
+end
 
 @inline function count_kmers(
     sequence::SequenceType, k::Integer;
