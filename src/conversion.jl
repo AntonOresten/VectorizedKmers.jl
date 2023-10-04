@@ -2,5 +2,5 @@
 @inline Base.adjoint(kcm::KmerVectors) = transpose(kcm)
 
 function KmerVector(f::Function, kvs::KmerVectors{D, S, k}) where {D, S, k}
-    KmerVector{S, k}(reshape(mapslices(f, kvs.values, dims=D), :))
+    return KmerVector{S, k}(reshape(mapslices(f, kvs.values, dims=D), :))
 end

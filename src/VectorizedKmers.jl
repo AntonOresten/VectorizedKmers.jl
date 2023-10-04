@@ -16,7 +16,6 @@ export
     KmerVectors,
     KmerColumns,
     KmerRows,
-    eachvec,
 
     # counting
     count_kmers!,

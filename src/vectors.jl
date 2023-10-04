@@ -18,12 +18,12 @@ struct KmerVectors{D, S, k, T, M} <: AbstractKmerMatrix{S, k, T, M}
     function KmerVectors{D, S, k}(values::M) where {D, S, k, T <: Real, M <: AbstractMatrix{T}}
         @assert D isa Integer && 1 <= D <= 2 "Type parameter `D` must be an integer between 1 and 2."
         @assert size(values, 3-D) == S^k
-        new{D, S, k, T, M}(values)
+        return new{D, S, k, T, M}(values)
     end
 
     function KmerVectors{D, S, k}(n::Integer; T::Type{<:Real}=Int, zeros::Function=zeros) where {D, S, k}
         dims = (D == 1) ? (n, S^k) : (S^k, n)
-        KmerVectors{D, S, k}(zeros(T, dims))
+        return KmerVectors{D, S, k}(zeros(T, dims))
     end
 end
 
@@ -36,11 +36,11 @@ Base.hash(kvs::KmerVectors{D}, h::UInt) where D = hash(get_S(kvs), hash(kvs.valu
 @inline Base.length(kvs::KmerVectors{D}) where D = size(kvs, D)
 
 @inline function Base.getindex(krs::KmerRows{S, k}, i) where {S, k}
-    KmerVector{S, k}(view(krs.values, i, :))
+    return KmerVector{S, k}(view(krs.values, i, :))
 end
 
 @inline function Base.getindex(kcs::KmerColumns{S, k}, i) where {S, k}
-    KmerVector{S, k}(view(kcs.values, :, i))
+    return KmerVector{S, k}(view(kcs.values, :, i))
 end
 
 @inline _eachvec_iter(kvs::KmerVectors{D}) where D = (D == 1) ? eachrow(kvs.values) : eachcol(kvs.values)

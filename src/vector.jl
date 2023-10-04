@@ -11,17 +11,15 @@ struct KmerVector{S, k, T, V} <: AbstractKmerVector{S, k, T, V}
 
     function KmerVector{S, k}(values::V) where {S, k, T <: Real, V <: AbstractVector{T}}
         @assert length(values) == S^k
-        new{S, k, T, V}(values)
+        return new{S, k, T, V}(values)
     end
 
     function KmerVector{S, k}(; T::Type{<:Real}=Int, zeros::Function=zeros) where {S, k}
-        KmerVector{S, k}(zeros(T, S^k))
+        return KmerVector{S, k}(zeros(T, S^k))
     end
 end
 
-function Base.summary(kv::KmerVector)
-    string(typeof(kv))
-end
+Base.summary(kv::KmerVector) = string(typeof(kv))
 
 function Base.show(io::IO, kv::KmerVector)
     max_elements_to_show = 10
@@ -36,4 +34,6 @@ function Base.show(io::IO, kv::KmerVector)
     end
 
     print(io, "])")
+
+    return nothing
 end

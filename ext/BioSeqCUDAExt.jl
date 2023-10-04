@@ -72,7 +72,7 @@ function VectorizedKmers.count_kmers!(
             end
         end
 
-        nothing
+        return nothing
     end
 
     mask = unsigned(4^k - 1)
@@ -82,7 +82,7 @@ function VectorizedKmers.count_kmers!(
     @cuda threads=threads blocks=blocks count_kmers_column!(
         values, data_matrix, seq_lengths, num_seqs, k, mask, data_lengths, offset)
 
-    kmer_columns
+    return kmer_columns
 end
 
 end

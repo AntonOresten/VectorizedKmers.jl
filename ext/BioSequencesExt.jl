@@ -30,7 +30,7 @@ VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
             values[kmer + 1] += first_count_index <= i
         end
     end
-    kmer_vector
+    return kmer_vector
 end
 
 @inline function VectorizedKmers.count_kmers!(
@@ -57,7 +57,7 @@ end
             values[kmer + 1] += first_count_index <= i
         end
     end
-    kmer_vector
+    return kmer_vector
 end
 
 end

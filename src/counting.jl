@@ -30,7 +30,7 @@ function count_kmers! end
         values[kmer + 1] += 1
     end
 
-    kv
+    return kv
 end
 
 @inline function count_kmers!(
@@ -41,7 +41,7 @@ end
     for (kv, sequence) in zip(kv_gen, sequences) # TODO: parallelize; may need to collect iterator or do iterate through both with indices and check bounds and shit
         count_kmers!(kv, sequence, reset=reset)
     end
-    kvs
+    return kvs
 end
 
 
@@ -60,7 +60,7 @@ function count_kmers end
 ) where SequenceType
     kv = KmerVector{S, k}(T=T, zeros=zeros)
     count_kmers!(kv, sequence, reset=false)
-    kv
+    return kv
 end
 
 @inline function count_kmers(
@@ -69,7 +69,7 @@ end
 ) where SequenceType
     kvs = KmerVectors{D, S, k}(length(sequences), T=T, zeros=zeros)
     count_kmers!(kvs, sequences, reset=false)
-    kvs
+    return kvs
 end
 
 alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
@@ -79,7 +79,7 @@ alphabet_size(T::DataType) = error("$(T) does not have a defined alphabet size. 
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
     S = alphabet_size(SequenceType)
-    count_kmers(sequence, S, k, T=T, zeros=zeros)
+    return count_kmers(sequence, S, k, T=T, zeros=zeros)
 end
 
 @inline function count_kmers(
@@ -87,7 +87,7 @@ end
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
     S = alphabet_size(SequenceType)
-    count_kmers(sequences, S, k, T=T, zeros=zeros)
+    return count_kmers(sequences, S, k, T=T, zeros=zeros)
 end
 
 # for backward compatibility
