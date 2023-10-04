@@ -23,6 +23,9 @@ using BioSequences
 
             seq = randdnaseq(100)
             @test all([count_kmers(seq[i:j], 5) == count_kmers(view(seq, i:j), 5) for i in 1:100, j in 1:100])
+
+            @test count_kmers!(KmerVector{4, 5}(falses(4^5)), seq).values == count_kmers(seq, 5).values .% 2
+            @test count_kmers!(KmerVector{4, 5}(falses(4^5)), view(seq, 50:100)).values == count_kmers(seq[50:100], 5).values .% 2
         end
 
         @testset "Multiple sequences" begin
