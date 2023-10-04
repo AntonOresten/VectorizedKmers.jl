@@ -14,8 +14,9 @@ makedocs(;
         "Home" => "index.md",
         "Integer representation of k-mers" => "kmer_int_repr.md",
         "k-mer counting" => Any[
-            "Vectors of k-mer counts" => "kmer_count_vector.md",
-            "Matrices of k-mers counts" => "kmer_count_matrix.md",
+            "Vectors of k-mer counts" => "kmer_vector.md",
+            "Matrices of k-mers counts" => "kmer_matrix.md",
+        ],
         ],
         "API Reference" => "references.md",
     ],
