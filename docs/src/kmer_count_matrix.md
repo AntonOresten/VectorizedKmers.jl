@@ -50,7 +50,7 @@ julia> kc[1]
  0
 ```
 
-### Let's count some k-mers
+### Counting k-mers in matrices
 
 Now that we understand how storing k-mer counts in matrices works, we can count k-mers of sequences using a method of `count_kmers!` that takes a `KmerVector` and a sequence as input.
 

@@ -23,22 +23,21 @@ Consider the DNA sequence `GATTACA`. If we convert it to an integer using the ta
 Writing a function for this might look like the following:
 
 ```jldoctest
-const DNA_ENCODING_VECTOR = zeros(UInt, 127)
+julia> const DNA_ENCODING_VECTOR = zeros(UInt, 127);
 
-for (i, char) in enumerate("ACGT")
-    DNA_ENCODING_VECTOR[char % Int8] = i - 1
-end
+julia> for (i, char) in enumerate("ACGT")
+           DNA_ENCODING_VECTOR[char % Int8] = i - 1
+       end;
 
-function kmer_to_int(kmer::String)
-    kmer_int = zero(UInt)
-    for char in kmer
-        kmer_int = (kmer_int << 2) | DNA_ENCODING_VECTOR[char % Int8]
-    end
-    return kmer_int
-end
+julia> function kmer_to_int(kmer::String)
+           kmer_int = zero(UInt)
+           for char in kmer
+               kmer_int = (kmer_int << 2) | DNA_ENCODING_VECTOR[char % Int8]
+           end
+           return kmer_int
+       end;
 
-# or if you're into code golf:
-f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]
+julia> f(k;i=0)=[i=4i|(c%Int-1-(c=='C'))&3 for c=k][end]; # or if you're into code golf:
 ```
 
 !!! note
@@ -88,13 +87,13 @@ $$
 We can write a function for this:
 
 ```jldoctest
-function kmer_to_int(kmer::LongAA)
-    kmer_int = zero(UInt)
-    for aa in kmer
-        kmer_int = kmer_int * 28 + reinterpret(UInt8, aa)
-    end
-    kmer_int
-end
+julia> function kmer_to_int(kmer::LongAA)
+           kmer_int = zero(UInt)
+           for aa in kmer
+               kmer_int = kmer_int * 28 + reinterpret(UInt8, aa)
+           end
+           kmer_int
+       end
 ```
 
 To test it, we can use the `aa"..."` string macro to create a `LongAA` instance:
