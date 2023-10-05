@@ -50,7 +50,7 @@ julia> kv2 = KmerVector{4, 1}(T=Int64, zeros=spzeros)
  0
  0
 
-julia> count_kmers!(kv, dna"GATTACA")
+julia> count_kmers!(kv2, dna"GATTACA")
 4-element KmerVector{4, 1, Int64, SparseVector{Int64, Int64}}:
  3
  1

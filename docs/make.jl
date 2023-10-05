@@ -9,7 +9,7 @@ makedocs(;
         prettyurls = get(ENV, "CI", "false") == "true",
     ),
     sitename = "VectorizedKmers.jl",
-    #doctest = true,
+    doctest = true,
     pages = [
         "Home" => "index.md",
         "Integer representation of k-mers" => "kmer_int_repr.md",
