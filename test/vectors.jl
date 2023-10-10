@@ -9,7 +9,7 @@
             @test length(kcs) == 3
             @test kcs[1] == KmerVector{4, 2}()
             @test transpose(kcs) == kcs'
-            @test all(iszero, zeros!(kcs))
+            @test all(iszero, VectorizedKmers.zeros!(kcs))
             kcs[1, 1] = 1
             @test kcs[1, 1] == 1
             @test eachcol(kcs)[1] == kcs[1].values
@@ -23,7 +23,7 @@
             @test length(krs) == 3
             @test krs[1] == KmerVector{4, 2}()
             @test transpose(krs) == krs'
-            @test all(iszero, zeros!(krs))
+            @test all(iszero, VectorizedKmers.zeros!(krs))
             krs[1, 1] = 1
             @test krs[1, 1] == 1
             @test eachrow(krs)[1] == krs[1].values

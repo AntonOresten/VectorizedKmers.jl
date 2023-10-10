@@ -5,7 +5,6 @@ export
     AbstractKmerArray,
     get_S,
     get_k,
-    zeros!,
 
     # Vector
     AbstractKmerVector,
