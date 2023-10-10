@@ -2,23 +2,22 @@ module BioSequencesExt
  
 using VectorizedKmers, BioSequences
 
-const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}}, LongSubSeq{<:NucleicAcidAlphabet{N}}}
+import BioSequences: SeqOrView
 
-VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
+VectorizedKmers.alphabet_size(::Type{<:SeqOrView{<:NucleicAcidAlphabet}}) = 4
+VectorizedKmers.alphabet_size(::Type{<:SeqOrView{<:AminoAcidAlphabet}}) = 20
 
 @inline function VectorizedKmers.count_kmers!(
     kmer_vector::KmerVector{4, k, T, A},
-    sequence::LongNucOrView{2};
+    sequence::SeqOrView{<:NucleicAcidAlphabet{2}};
     reset::Bool = true,
 ) where {k, T, A <: AbstractVector{T}}
     reset && VectorizedKmers.zeros!(kmer_vector)
-    values = kmer_vector.values
-    len = length(sequence)
-    len < k && return kmer_vector
+    length(sequence) < k && return kmer_vector
     mask = UInt(4^k - 1)
     kmer = UInt(0)
-    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, len)
-    data_start, data_stop = (start - 1) ÷ 32 + 1, (stop - 1) ÷ 32 + 1
+    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
+    data_start, data_stop = cld(start, 32), cld(stop, 32)
     first_count_index = k + start - 1
     i = 32 * (data_start - 1)
     @inbounds for data_int in @view sequence.data[data_start:data_stop]
@@ -26,7 +25,7 @@ VectorizedKmers.alphabet_size(::Type{<:LongNucOrView}) = 4
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | ((data_int >> j) & 0b11)
-            values[kmer + 1] += first_count_index <= i
+            kmer_vector.values[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_vector
@@ -34,17 +33,15 @@ end
 
 @inline function VectorizedKmers.count_kmers!(
     kmer_vector::KmerVector{4, k, T, A},
-    sequence::LongNucOrView{4};
+    sequence::SeqOrView{<:NucleicAcidAlphabet{4}};
     reset::Bool = true,
 ) where {k, T, A <: AbstractVector{T}}
     reset && VectorizedKmers.zeros!(kmer_vector)
-    values = kmer_vector.values
-    len = length(sequence)
-    len < k && return kmer_vector
+    length(sequence) < k && return kmer_vector
     mask = UInt(4^k - 1)
     kmer = UInt(0)
-    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, len)
-    data_start, data_stop = (start - 1) ÷ 16 + 1, (stop - 1) ÷ 16 + 1
+    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
+    data_start, data_stop = cld(start, 16), cld(stop, 16)
     first_count_index = k + start - 1
     i = 16 * (data_start - 1)
     @inbounds for data_int in @view sequence.data[data_start:data_stop]
@@ -52,7 +49,31 @@ end
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)
-            values[kmer + 1] += first_count_index <= i
+            kmer_vector.values[kmer + 1] += first_count_index <= i
+        end
+    end
+    return kmer_vector
+end
+
+function VectorizedKmers.count_kmers!(
+    kmer_vector::KmerVector{20, k, T, A},
+    sequence::SeqOrView{<:AminoAcidAlphabet};
+    reset::Bool = true,
+) where {k, T, A}
+    reset && VectorizedKmers.zeros!(kmer_vector)
+    length(sequence) < k && return kmer_vector
+    mask = UInt(20^k)
+    kmer = UInt(0)
+    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
+    data_start, data_stop = cld(start, 8), cld(stop, 8)
+    first_count_index = k + start - 1
+    i = 8 * (data_start - 1)
+    @inbounds for data_int in @view sequence.data[data_start:data_stop]
+        for j in 0:8:63
+            i += 1
+            i > stop && break
+            kmer = (kmer * 20 + ((data_int >> j) & 0xff) % 20) % mask
+            kmer_vector.values[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_vector
@@ -60,17 +81,16 @@ end
 
 @inline function VectorizedKmers.count_kmers!(
     kmer_vector::KmerVector{4, k, Bool, BitVector},
-    sequence::LongNucOrView{4};
+    sequence::SeqOrView{<:NucleicAcidAlphabet{4}};
     reset::Bool = true,
 ) where k
     chunks = kmer_vector.values.chunks
     reset && fill!(chunks, zero(UInt))
-    len = length(sequence)
-    len < k && return kmer_vector
+    length(sequence) < k && return kmer_vector
     mask = UInt(4^k - 1)
     kmer = UInt(0)
-    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, len)
-    data_start, data_stop = (start - 1) ÷ 16 + 1, (stop - 1) ÷ 16 + 1
+    start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
+    data_start, data_stop = cld(start, 16), cld(stop, 16)
     first_count_index = k + start - 1
     i = 16 * (data_start - 1)
     @inbounds for data_int in @view sequence.data[data_start:data_stop]
