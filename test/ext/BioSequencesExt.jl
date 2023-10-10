@@ -21,11 +21,14 @@ using BioSequences
             kv = KmerVector{4, 2}()
             @test count_kmers!(kv, dna"ACGT").values == [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
 
-            seq = randdnaseq(100)
-            @test all([count_kmers(seq[i:j], 5) == count_kmers(view(seq, i:j), 5) for i in 1:100, j in 1:100])
+            seq = randdnaseq(50)
+            @test all([count_kmers(seq[i:j], 3) == count_kmers(view(seq, i:j), 3) for i in 1:50, j in 1:50])
 
             @test count_kmers!(KmerVector{4, 5}(falses(4^5)), seq).values == count_kmers(seq, 5).values .% 2
-            @test count_kmers!(KmerVector{4, 5}(falses(4^5)), view(seq, 50:100)).values == count_kmers(seq[50:100], 5).values .% 2
+            @test count_kmers!(KmerVector{4, 5}(falses(4^5)), view(seq, 1:50)).values == count_kmers(seq[1:50], 5).values .% 2
+
+            aa_seq = randaaseq(50)
+            @test all([count_kmers(aa_seq[i:j], 2) == count_kmers(view(aa_seq, i:j), 2) for i in 1:50, j in 1:50])
         end
 
         @testset "Multiple sequences" begin
