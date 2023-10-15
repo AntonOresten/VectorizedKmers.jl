@@ -47,6 +47,6 @@ For more examples, including some technical stuff, see the [documentation](https
 ## Limitations
 The main downside of counting $k$-mers this way is that, unless [SparseArrays.jl](https://github.com/JuliaSparse/SparseArrays.jl) is used, the vectors will grow immensely large as $k$ increases. The 31-mer count vector of a DNA sequence would have a length of $4^{31} = 4,611,686,018,427,387,904$, which is equivalent to four exbibytes of memory, if the counts are stored as 8-bit integers — which is just not feasible, really. Not only does allocating a lot of memory take up a lot of memory, but it can also take a substantial amount of time. This method of counting $k$-mers therefore works best for lower $k$-values (unless [SparseArrays.jl](https://github.com/JuliaSparse/SparseArrays.jl) is used).
 
-[^1]: The speed is on the order of a billion $k$-mers per second on a single CPU thread, for BioSequence types, not including memory allocation.
+[^1]: The speed is on the order of a billion k-mers per second on a single CPU thread, for BioSequence types, not including memory allocation.
 
-[^2]: $k$-mer counting on a GPU is *fast*, when done in parallel on multiple sequences.
+[^2]: k-mer counting on a GPU is *fast*, when done in parallel on multiple sequences.
