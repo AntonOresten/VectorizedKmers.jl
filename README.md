@@ -7,13 +7,13 @@
 [![Status](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/anton083/VectorizedKmers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/anton083/VectorizedKmers.jl)
 
-VectorizedKmers.jl is a Julia package primarily designed for fast[^1] $k$-mer counting of biological sequences. The core idea is that $k$-mers with an alphabet size of $S$ are essentially integers in base $S$, and can be used as indices in a vector of size $S^k$ to count the corresponding $k$-mers.
+VectorizedKmers.jl is a Julia package primarily designed for fast $k$-mer counting of biological sequences.[^1] The core idea is that $k$-mers with an alphabet size of $S$ are essentially integers in base $S$, and can be used as indices in a vector of size $S^k$ to count the corresponding $k$-mers.
 
-The `KmerVector` type is a wrapper for `AbstractVector`, which means that these vector k-mer counts are not limited to Julia's `Base.Vector` type; other kinds of vectors can be used as well, such as `CUDA.CuVector`[^2], `SparseArrays.SparseVector` or even matrix views.
+The `KmerVector` type is a wrapper for `AbstractVector`, which means that these vector k-mer counts are not limited to Julia's `Base.Vector` type; other kinds of vectors can be used as well, such as `CUDA.CuVector`, `SparseArrays.SparseVector` or even matrix views.
 
 To efficiently group k-mer counts together, `KmerRows` and `KmerColumns` stores them in a matrix as rows or columns. These types can wrap any `AbstractMatrix`, such as `Matrix` or `CuMatrix`, and accessing its elements by index returns a `KmerVector` wrapped around a view of a row or column of the original matrix.
 
-This data structure can be used to quickly approximate distances between sequences. Notably, the squared Euclidean distance was used to approximate edit distance in [this paper](https://doi.org/10.1093/nar/gkz657). The dot product has also proven to be a useful metric for comparing correlation between sequences. Performing matrix multiplication on a `KmerRows` and a `KmerColumns` can therefore be used to rapidly compute a correlation score between all pairs of sequences, especially on a GPU.
+This data structure can be used to quickly approximate distances between sequences. Notably, the squared Euclidean distance was used to approximate edit distance in [this paper](https://doi.org/10.1093/nar/gkz657). The dot product has also proven to be a useful metric for comparing correlation between sequences. Performing matrix multiplication on a `KmerRows` and a `KmerColumns` can therefore be used to rapidly compute a correlation score between all pairs of sequences, especially on a GPU.[^2]
 
 ## Examples
 ```julia
