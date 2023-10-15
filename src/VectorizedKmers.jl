@@ -3,8 +3,6 @@ module VectorizedKmers
 export
     # AbstractKmerArray
     AbstractKmerArray,
-    get_S,
-    get_k,
 
     # Vector
     AbstractKmerVector,

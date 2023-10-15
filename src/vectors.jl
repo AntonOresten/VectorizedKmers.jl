@@ -10,7 +10,7 @@ A container for k-mer vectors, where the values are stored together as columns o
 `S` is the alphabet size,
 `k` is the k-mer length,
 and `T` is the element type of the underlying `values` field,
-which in turn has type `V`.
+which in turn has type `M`.
 """
 struct KmerVectors{D, S, k, T, M} <: AbstractKmerMatrix{S, k, T, M}
     values::M
@@ -31,7 +31,7 @@ const KmerRows = KmerVectors{1}
 const KmerColumns = KmerVectors{2}
 
 # used to distinguish between KmerColumns{4, 2}(4) and KmerRows{4, 1}(16)
-Base.hash(kvs::KmerVectors{D}, h::UInt) where D = hash(get_S(kvs), hash(kvs.values, h ⊻ D))
+Base.hash(kvs::KmerVectors{D, S}, h::UInt) where {D, S} = hash(kvs.values, h ⊻ S ⊻ D)
 
 @inline Base.length(kvs::KmerVectors{D}) where D = size(kvs, D)
 
