@@ -10,14 +10,11 @@ BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 
 [extensions]
-BioSeqCUDAExt = ["BioSequences", "CUDA"]
 BioSequencesExt = "BioSequences"
-CUDAExt = "CUDA"
 
 [compat]
 julia = "1"
 BioSequences = "3"
-CUDA = "^4"
 
 [extras]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
