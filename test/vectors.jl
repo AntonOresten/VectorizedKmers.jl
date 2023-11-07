@@ -3,7 +3,7 @@
     @testset "AbstractKmerMatrix" begin
 
         @testset "KmerColumns" begin
-            kcs = KmerColumns{4, 2}(zeros(Int, (16, 3)))
+            kcs = KmerColumns{4, 2}(3)
             @test size(kcs) == (16, 3)
             @test kcs[1, 1] == 0
             @test length(kcs) == 3
@@ -17,7 +17,7 @@
         end
 
         @testset "KmerRows" begin
-            krs = KmerRows{4, 2}(zeros(Int, (3, 16)))
+            krs = KmerRows{4, 2}(3)
             @test size(krs) == (3, 16)
             @test krs[1, 1] == 0
             @test length(krs) == 3

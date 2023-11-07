@@ -60,7 +60,7 @@ end
 
 @inline function count_kmers(
     sequences::Vector{SequenceType}, S::Integer, k::Integer;
-    T::Type{<:Real} = Int, zeros::Function = zeros, D = 2,
+    T::Type{<:Real} = Int, zeros::Function = zeros, D = 1,
 ) where SequenceType
     kvs = KmerVectors{D, S, k}(length(sequences), T=T, zeros=zeros)
     count_kmers!(kvs, sequences, reset=false)

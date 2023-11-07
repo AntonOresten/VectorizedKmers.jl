@@ -21,11 +21,9 @@ const AbstractKmerMatrix = AbstractKmerArray{2}
 @inline Base.getindex(ka::AbstractKmerArray, i, j) = ka.values[i, j]
 @inline Base.setindex!(ka::AbstractKmerArray, v, i) = ka.values[i] = v
 @inline Base.setindex!(ka::AbstractKmerArray, v, i, j) = ka.values[i, j] = v
-@inline get_S(::AbstractKmerArray{N, S}) where {N, S} = S
-@inline get_k(::AbstractKmerArray{N, S, k}) where {N, S, k} = k
 @inline zeros!(ka::AbstractKmerArray) = fill!(ka.values, zero(eltype(ka)))
 
 # also see the ::KmerVectors{D} method in src/vectors.jl
-Base.hash(ka::AbstractKmerArray, h::UInt) = hash(get_S(ka), hash(ka.values, h))
+Base.hash(ka::AbstractKmerArray{N, S}, h::UInt) where {N, S} = hash(ka.values, h ⊻ S)
 
 Base.:(==)(ka1::AbstractKmerArray, ka2::AbstractKmerArray) = hash(ka1) == hash(ka2)

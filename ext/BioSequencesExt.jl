@@ -11,11 +11,11 @@ VectorizedKmers.alphabet_size(::Type{<:SeqOrView{<:AminoAcidAlphabet}}) = 20
     kmer_vector::KmerVector{4, k, T, A},
     sequence::SeqOrView{<:NucleicAcidAlphabet{2}};
     reset::Bool = true,
-) where {k, T, A <: AbstractVector{T}}
+) where {k, T, A}
     reset && VectorizedKmers.zeros!(kmer_vector)
     length(sequence) < k && return kmer_vector
-    mask = UInt(4^k - 1)
-    kmer = UInt(0)
+    mask = one(UInt) << 2k - 1
+    kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
     data_start, data_stop = cld(start, 32), cld(stop, 32)
     first_count_index = k + start - 1
@@ -35,11 +35,11 @@ end
     kmer_vector::KmerVector{4, k, T, A},
     sequence::SeqOrView{<:NucleicAcidAlphabet{4}};
     reset::Bool = true,
-) where {k, T, A <: AbstractVector{T}}
+) where {k, T, A}
     reset && VectorizedKmers.zeros!(kmer_vector)
     length(sequence) < k && return kmer_vector
-    mask = UInt(4^k - 1)
-    kmer = UInt(0)
+    mask = one(UInt) << 2k - 1
+    kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
     data_start, data_stop = cld(start, 16), cld(stop, 16)
     first_count_index = k + start - 1
@@ -55,7 +55,7 @@ end
     return kmer_vector
 end
 
-function VectorizedKmers.count_kmers!(
+@inline function VectorizedKmers.count_kmers!(
     kmer_vector::KmerVector{20, k, T, A},
     sequence::SeqOrView{<:AminoAcidAlphabet};
     reset::Bool = true,
@@ -87,8 +87,8 @@ end
     chunks = kmer_vector.values.chunks
     reset && fill!(chunks, zero(UInt))
     length(sequence) < k && return kmer_vector
-    mask = UInt(4^k - 1)
-    kmer = UInt(0)
+    mask = one(UInt) << 2k - 1
+    kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
     data_start, data_stop = cld(start, 16), cld(stop, 16)
     first_count_index = k + start - 1
