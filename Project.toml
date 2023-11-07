@@ -17,7 +17,7 @@ CUDAExt = "CUDA"
 [compat]
 julia = "1"
 BioSequences = "3"
-CUDA = "4, 5"
+CUDA = "^4"
 
 [extras]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
