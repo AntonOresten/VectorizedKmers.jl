@@ -10,7 +10,7 @@ function count_kmers! end
 # This method is used for testing.
 # sequence is wrapped by RefValue cause otherwise it gets mistaken for a vector of sequences.
 @inline function count_kmers!(
-    kv::KmerVector{S, k}, sequence::Base.RefValue{Vector{T}};
+    kv::KmerVector{S, k}, sequence::Base.RefValue{<:AbstractVector{T}};
     reset::Bool = true,
 ) where {S, k, T <: Integer}
     sequence = sequence[]
@@ -30,7 +30,7 @@ function count_kmers! end
 end
 
 @inline function count_kmers!(
-    kvs::KmerVectors{D, S, k}, sequences::Vector{SequenceType};
+    kvs::KmerVectors{D, S, k}, sequences::AbstractVector{SequenceType};
     offset::Integer = 0, reset::Bool = true,
 ) where {D, S, k, SequenceType}
     kv_gen = Iterators.drop(eachvec(kvs), offset)
@@ -81,7 +81,7 @@ end
 end
 
 @inline function count_kmers(
-    sequences::Vector{SequenceType}, k::Integer;
+    sequences::AbstractVector{SequenceType}, k::Integer;
     T::Type{<:Real} = Int, zeros::Function = zeros,
 ) where SequenceType
     S = alphabet_size(SequenceType)
