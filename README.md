@@ -7,32 +7,33 @@
 [![Status](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/anton083/VectorizedKmers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/anton083/VectorizedKmers.jl)
 
-VectorizedKmers.jl is a Julia package primarily designed for fast $k$-mer counting of biological sequences. The core idea is that $k$-mers with an alphabet size of $N$ are essentially integers in base $N$, and can be used as indices in a vector of size $S^k$ to count the corresponding $k$-mers.
+VectorizedKmers.jl is a Julia package primarily designed for fast $k$-mer counting of biological sequences. The core idea is that $k$-mers with an alphabet size of $N$ are essentially integers in base $N$, and can be used as indices in a vector of size $N^k$ to count the corresponding $k$-mers.
 
 This data structure can be used to quickly approximate distances between sequences. Notably, the squared Euclidean distance was used to approximate edit distance in [this paper](https://doi.org/10.1093/nar/gkz657). The dot product has also proven to be a useful metric for comparing correlation between sequences.
 
 ## Examples
+
 ```julia
 julia> using VectorizedKmers, BioSequences
 
 julia> kmer_array = count_kmers(dna"ACCGGGTTTT", 1)
 KmerArray{4, 1, Int64, Vector{Int64}} with size (4,)
 
-julia> kmer_array.values
+julia> kmer_array |> values
 4-element Vector{Int64}:
  1
  2
  3
  4
 
-julia> count_kmers(dna"AATT", 2).values # 2-mers of AATT
+julia> count_kmers(dna"AATT", 2) |> values # 2-mers of AATT
 4×4 Matrix{Int64}:
  1  0  0  0
  0  0  0  0
  0  0  0  0
  1  0  0  1
 
-julia> count_kmers(aa"AY", 1).values
+julia> count_kmers(aa"AY", 1) |> values
 20-element Vector{Int64}:
  1
  0
