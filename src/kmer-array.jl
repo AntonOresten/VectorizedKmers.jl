@@ -14,12 +14,13 @@ hypercubify(A::AbstractArray, N::Int, K::Int) = reshape(A, ktuple(N, K))
 - `A` is the array type
 """
 struct KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: StaticArray{NTuple{K, N}, T, K}
-    values::OffsetArray{T, K, A}
+    offset_values::OffsetArray{T, K, A}
 
-    function KmerArray{N, K, T, A}(values::OffsetArray{T, K, A}) where {N, K, T <: Real, A <: AbstractArray{T, K}}
-        all(isequal(N), ktuple(N, K)) || throw(ArgumentError("all dimensions of `values` must be equal to `N`"))
-        size(values) == ktuple(N, K) || throw(ArgumentError("size(values) must be $(ktuple(N, K))"))
-        return new{N, K, T, A}(values)
+    function KmerArray{N, K, T, A}(offset_values::OffsetArray{T, K, A}) where {N, K, T <: Real, A <: AbstractArray{T, K}}
+        all(isequal(N), ktuple(N, K)) || throw(ArgumentError("all dimensions of `offset_values` must be equal to `N`"))
+        size(offset_values) == ktuple(N, K) || throw(ArgumentError("size(offset_values) must be $(ktuple(N, K))"))
+        axes(offset_values) == offset_axes(N, K) || throw(ArgumentError("axes(offset_values) must be $(offset_axes(N, K))"))
+        return new{N, K, T, A}(offset_values)
     end
 end
 
@@ -31,18 +32,21 @@ KmerArray{N, K}(values::AbstractArray) where {N, K} = KmerArray{N, K}(hypercubif
 KmerArray(values::AbstractArray) = KmerArray{size(values, 1), ndims(values)}(values)
 KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros::Function=zeros) = KmerArray{N, K}(zeros(T, ktuple(N, K)))
 
-Base.size(ka::KmerArray) = size(ka.values)
-Base.length(ka::KmerArray) = length(ka.values)
+@inline Base.size(::KmerArray{N, K}) where {N, K} = ktuple(N, K)
+@inline Base.length(::KmerArray{N, K}) where {N, K} = N^K
+@inline Base.axes(::KmerArray{N, K}) where {N, K} = offset_axes(N, K)
 
-Base.axes(::KmerArray{N, K}) where {N, K} = offset_axes(N, K)
+@inline Base.values(ka::KmerArray) = ka.offset_values.parent
 
-Base.getindex(ka::KmerArray, i::Vararg{<:Integer, N}) where N = ka.values[i...]
-Base.getindex(ka::KmerArray, i::Integer) = ka.values.parent[i+1]
+@inline Base.getindex(ka::KmerArray, inds::Vararg{<:Integer, N}) where N = ka.offset_values[inds...]
+@inline Base.getindex(ka::KmerArray, i::Int) = ka.offset_values.parent[i + 1]
+@inline Base.getindex(ka::KmerArray, i::Integer) = ka[i % Int]
 
-Base.setindex!(ka::KmerArray, v, i::Vararg{<:Integer, N}) where N = (ka.values[i...] = v)
-Base.setindex!(ka::KmerArray, v, i::Integer) = (ka.values.parent[i+1] = v)
+@inline Base.setindex!(ka::KmerArray, v, inds::Vararg{<:Integer, N}) where N = (ka.offset_values[inds...] = v)
+@inline Base.setindex!(ka::KmerArray, v, i::Int) = (ka.offset_values.parent[i + 1] = v) # need to access parent since linear indexing gets offset if K == 1
+@inline Base.setindex!(ka::KmerArray, v, i::Integer) = (ka[i % Int] = v)
 
-Base.show(io::IO, ka::KmerArray) = print(io, "$(typeof(ka)) with size $(size(ka.values))")
+Base.show(io::IO, ka::KmerArray) = print(io, "$(typeof(ka)) with size $(size(ka))")
 Base.show(io::IO, ::MIME"text/plain", ka::KmerArray) = show(io, ka)
 
-zeros!(ka::KmerArray) = fill!(ka.values, zero(eltype(ka)))
+zeros!(ka::KmerArray) = fill!(ka.offset_values, zero(eltype(ka)))
