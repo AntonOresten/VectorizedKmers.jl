@@ -1,7 +1,6 @@
 import StaticArraysCore: StaticArray
 
 sizetuple(N::Int, K::Int) = NTuple{K, Int}(N for _ in 1:K)
-sizetuple(::Type{NTuple{K, N}}) where {K, N} = sizetuple(N, K)
 hypercubify(A::AbstractArray, N::Int, K::Int) = reshape(A, sizetuple(N, K))
 
 """
