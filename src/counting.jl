@@ -5,7 +5,7 @@ function count_kmers! end
 
 # primarily meant for testing purposes
 function count_kmers!(
-    kmer_array::KmerArray{N, K}, sequence::Vector{Int};
+    kmer_array::KmerArray{N, K}, seq::Vector{Int};
     reset::Bool = true,
 ) where {N, K}
     0 <= maximum(seq) < N || throw(ArgumentError("seq contains elements outside the range 0:N-1"))
