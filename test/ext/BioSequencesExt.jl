@@ -17,9 +17,13 @@ using BioSequences
 
         kv = KmerArray(4, 1)
         @test count_kmers!(kv, dna"ACGT") == KmerArray([1, 1, 1, 1])
+        @test kv[LongDNA{2}(dna"A")] == 1
+        @test kv[dna"A"] == 1
 
         kv = KmerArray(4, 2)
         @test count_kmers!(kv, dna"ACGT") == KmerArray([0; 1; 0; 0;; 0; 0; 1; 0;; 0; 0; 0; 1;; 0; 0; 0; 0])
+        @test kv[LongDNA{2}(dna"AC")] == 1
+        @test kv[dna"AC"] == 1
 
         seq = randdnaseq(50)
         @test all([count_kmers(seq[i:j], 3) == count_kmers(view(seq, i:j), 3) for i in 1:50, j in 1:50])
@@ -27,8 +31,9 @@ using BioSequences
         @test values(count_kmers!(KmerArray{4, 5}(falses(4^5)), seq)) == values(count_kmers(seq, 5)) .% 2
         @test values(count_kmers!(KmerArray{4, 5}(falses(4^5)), view(seq, 1:50))) == values(count_kmers(seq[1:50], 5)) .% 2
 
-        aa_seq = randaaseq(50)
+        aa_seq = randaaseq(48)*aa"AY"
         @test all([count_kmers(aa_seq[i:j], 2) == count_kmers(view(aa_seq, i:j), 2) for i in 1:50, j in 1:50])
+        @test count_kmers(aa_seq, 2)[aa"AY"] >= 1
 
     end
     

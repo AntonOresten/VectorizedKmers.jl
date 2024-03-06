@@ -38,13 +38,17 @@ KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros::Function=zeros) = KmerArra
 
 @inline Base.values(ka::KmerArray) = ka.offset_values.parent
 
-@inline Base.getindex(ka::KmerArray, inds::Vararg{<:Integer, N}) where N = ka.offset_values[inds...]
-@inline Base.getindex(ka::KmerArray, i::Int) = ka.offset_values.parent[i + 1]
-@inline Base.getindex(ka::KmerArray, i::Integer) = ka[i % Int]
+@inline Base.to_index(::KmerArray{N, K}, kmer::AbstractVector{<:Integer}) where {N, K} = LinearIndices(ktuple(N, K))[reverse(kmer .+ 1)...] - 1
 
-@inline Base.setindex!(ka::KmerArray, v, inds::Vararg{<:Integer, N}) where N = (ka.offset_values[inds...] = v)
-@inline Base.setindex!(ka::KmerArray, v, i::Int) = (ka.offset_values.parent[i + 1] = v) # need to access parent since linear indexing gets offset if K == 1
+@inline Base.getindex(ka::KmerArray, inds::Vararg{Integer, N}) where N = ka.offset_values[inds...]
+@inline Base.getindex(ka::KmerArray, i::Int) = ka.offset_values.parent[i + 1] # need to access parent since linear indexing gets offset if K == 1
+@inline Base.getindex(ka::KmerArray, i::Integer) = ka[i % Int]
+@inline Base.getindex(ka::KmerArray, i::AbstractVector{<:Integer}) = ka[Base.to_index(ka, i)]
+
+@inline Base.setindex!(ka::KmerArray, v, inds::Vararg{Integer, N}) where N = (ka.offset_values[inds...] = v)
+@inline Base.setindex!(ka::KmerArray, v, i::Int) = (ka.offset_values.parent[i + 1] = v)
 @inline Base.setindex!(ka::KmerArray, v, i::Integer) = (ka[i % Int] = v)
+@inline Base.setindex!(ka::KmerArray, v, i::AbstractVector{<:Integer}) = (ka[Base.to_index(ka, i)] = v)
 
 Base.show(io::IO, ka::KmerArray) = print(io, "$(typeof(ka)) with size $(size(ka))")
 Base.show(io::IO, ::MIME"text/plain", ka::KmerArray) = show(io, ka)

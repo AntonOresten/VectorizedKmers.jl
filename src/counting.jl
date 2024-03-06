@@ -10,11 +10,9 @@ function count_kmers!(
 ) where {N, K}
     0 <= maximum(seq) < N || throw(ArgumentError("seq contains elements outside the range 0:N-1"))
     reset && zeros!(kmer_array)
-    mask = N^K
-    kmer = zero(Int)
-    for (i, m) in enumerate(seq)
-        kmer = kmer * N % mask + m
-        K <= i && (kmer_array[kmer] += 1)
+    for i in 1:length(seq) - K + 1
+        kmer = @view seq[i:i+K-1]
+        kmer_array[kmer] += 1
     end
     return kmer_array
 end
