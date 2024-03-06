@@ -1,9 +1,10 @@
 name = "VectorizedKmers"
 uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
-authors = ["Anton Oresten"]
-version = "0.8.1"
+authors = ["Anton Oresten <anton.oresten42@gmail.com>"]
+version = "0.9.0"
 
 [deps]
+StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [weakdeps]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
@@ -12,8 +13,8 @@ BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 BioSequencesExt = "BioSequences"
 
 [compat]
-julia = "1"
 BioSequences = "3"
+julia = "1"
 
 [extras]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"

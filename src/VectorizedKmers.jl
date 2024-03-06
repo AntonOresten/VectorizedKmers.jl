@@ -1,27 +1,9 @@
 module VectorizedKmers
 
-export
-    # AbstractKmerArray
-    AbstractKmerArray,
+export KmerArray
+export count_kmers!, count_kmers
 
-    # Vector
-    AbstractKmerVector,
-    KmerVector,
-
-    # Matrix
-    AbstractKmerMatrix,
-    KmerVectors,
-    KmerColumns,
-    KmerRows,
-
-    # counting
-    count_kmers!,
-    count_kmers
-
-include("array.jl")
-include("vector.jl")
-include("vectors.jl")
-include("conversion.jl")
+include("kmer-array.jl")
 include("counting.jl")
 
 end
