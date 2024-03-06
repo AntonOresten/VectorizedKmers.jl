@@ -15,6 +15,8 @@ BioSequencesExt = "BioSequences"
 
 [compat]
 BioSequences = "3"
+OffsetArrays = "1"
+StaticArraysCore = "1"
 julia = "1"
 
 [extras]
