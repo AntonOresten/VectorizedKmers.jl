@@ -24,7 +24,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | ((data_int >> j) & 0b11)
-            kmer_array.values[kmer + 1] += first_count_index <= i
+            kmer_array.values.parent[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
@@ -47,7 +47,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)
-            kmer_array.values[kmer + 1] += first_count_index <= i
+            kmer_array.values.parent[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
@@ -70,7 +70,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = (kmer * 20 + ((data_int >> j) & 0xff) % 20) % mask
-            kmer_array.values[kmer + 1] += first_count_index <= i
+            kmer_array.values.parent[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
@@ -81,7 +81,7 @@ function VectorizedKmers.count_kmers!(
     sequence::SeqOrView{<:NucleicAcidAlphabet{4}};
     reset::Bool = true,
 ) where K
-    chunks = kmer_array.values.chunks
+    chunks = kmer_array.values.parent.chunks
     reset && fill!(chunks, zero(UInt))
     mask = one(UInt) << 2K - 1
     kmer = zero(UInt)

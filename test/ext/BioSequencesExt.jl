@@ -5,21 +5,21 @@ using BioSequences
     @testset "count_kmers" begin
 
         @testset "Single sequences" begin
-            @test count_kmers(dna"ACGT", 1).values == [1, 1, 1, 1]
-            @test count_kmers(rna"ACGU", 1).values == [1, 1, 1, 1]
-            @test count_kmers(view(dna"ACGT", 1:3), 1).values == [1, 1, 1, 0]
-            @test count_kmers(view(rna"ACGU", 2:4), 1).values == [0, 1, 1, 1]
+            @test count_kmers(dna"ACGT", 1) == KmerArray([1, 1, 1, 1])
+            @test count_kmers(rna"ACGU", 1) == KmerArray([1, 1, 1, 1])
+            @test count_kmers(view(dna"ACGT", 1:3), 1) == KmerArray([1, 1, 1, 0])
+            @test count_kmers(view(rna"ACGU", 2:4), 1) == KmerArray([0, 1, 1, 1])
             @test count_kmers(dna"ACGT", 1) == count_kmers(dna"ACGT", 1, UInt)
             @test count_kmers(dna"ACGT", 1) == count_kmers(LongDNA{2}(dna"ACGT"), 1)
 
-            @test count_kmers(view(LongDNA{2}(dna"A"^32*dna"T"), 33:33), 1) == [0, 0, 0, 1]
-            @test count_kmers(view(dna"A"^16*dna"T", 17:17), 1) == [0, 0, 0, 1]
+            @test count_kmers(view(LongDNA{2}(dna"A"^32*dna"T"), 33:33), 1) == KmerArray([0, 0, 0, 1])
+            @test count_kmers(view(dna"A"^16*dna"T", 17:17), 1) == KmerArray([0, 0, 0, 1])
 
             kv = KmerArray(4, 1)
-            @test count_kmers!(kv, dna"ACGT").values == [1, 1, 1, 1]
+            @test count_kmers!(kv, dna"ACGT") == KmerArray([1, 1, 1, 1])
 
             kv = KmerArray(4, 2)
-            @test count_kmers!(kv, dna"ACGT").values == [0; 1; 0; 0;; 0; 0; 1; 0;; 0; 0; 0; 1;; 0; 0; 0; 0]
+            @test count_kmers!(kv, dna"ACGT") == KmerArray([0; 1; 0; 0;; 0; 0; 1; 0;; 0; 0; 0; 1;; 0; 0; 0; 0])
 
             seq = randdnaseq(50)
             @test all([count_kmers(seq[i:j], 3) == count_kmers(view(seq, i:j), 3) for i in 1:50, j in 1:50])

@@ -4,6 +4,7 @@ authors = ["Anton Oresten <anton.oresten42@gmail.com>"]
 version = "0.9.0"
 
 [deps]
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [weakdeps]

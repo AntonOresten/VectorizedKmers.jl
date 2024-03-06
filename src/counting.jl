@@ -14,7 +14,7 @@ function count_kmers!(
     kmer = zero(Int)
     for (i, m) in enumerate(sequence)
         kmer = kmer * N % mask + m
-        K <= i && (kmer_array.values[kmer + 1] += 1)
+        K <= i && (kmer_array[kmer] += 1)
     end
     return kmer_array
 end
