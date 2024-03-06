@@ -26,7 +26,7 @@ makedocs(;
 deploydocs(;
     repo = "github.com/anton083/VectorizedKmers.jl.git",
     push_preview = true,
-    devbranch = "dev",
+    devbranch = "main",
     deps = nothing,
     make = nothing,
 )
