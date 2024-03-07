@@ -6,6 +6,8 @@ using Test
     include("kmer-array.jl")
     include("counting.jl")
 
-    include("ext/ext.jl")
+    @testset "extensions" begin
+        include("ext/BioSequencesExt.jl")
+    end
 
 end
