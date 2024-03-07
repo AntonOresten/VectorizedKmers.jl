@@ -13,7 +13,7 @@ hypercubify(A::AbstractArray, N::Int, K::Int) = reshape(A, ktuple(N, K))
 - `T` is the element type
 - `A` is the array type
 """
-struct KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: AbstractArray{T, K}
+struct KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: StaticArray{NTuple{K, N}, T, K}
     offset_values::OffsetArray{T, K, A}
 
     function KmerArray{N, K, T, A}(offset_values::OffsetArray{T, K, A}) where {N, K, T <: Real, A <: AbstractArray{T, K}}

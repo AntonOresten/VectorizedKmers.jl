@@ -11,10 +11,10 @@ VectorizedKmers.default_alphabet_size(::Type{<:NucleicAcid}) = 4
 VectorizedKmers.default_alphabet_size(::Type{AminoAcid}) = 20
 
 function VectorizedKmers.count_kmers!(
-    kmer_array::KmerArray{4, K, T, A},
+    kmer_array::KmerArray{4, K},
     sequence::SeqOrView{<:NucleicAcidAlphabet{2}};
     reset::Bool = true,
-) where {K, T, A}
+) where K
     reset && VectorizedKmers.zeros!(kmer_array)
     mask = one(UInt) << 2K - 1
     kmer = zero(UInt)
@@ -34,10 +34,10 @@ function VectorizedKmers.count_kmers!(
 end
 
 function VectorizedKmers.count_kmers!(
-    kmer_array::KmerArray{4, K, T, A},
+    kmer_array::KmerArray{4, K},
     sequence::SeqOrView{<:NucleicAcidAlphabet{4}};
     reset::Bool = true,
-) where {K, T, A}
+) where K
     reset && VectorizedKmers.zeros!(kmer_array)
     mask = one(UInt) << 2K - 1
     kmer = zero(UInt)
@@ -57,10 +57,10 @@ function VectorizedKmers.count_kmers!(
 end
 
 function VectorizedKmers.count_kmers!(
-    kmer_array::KmerArray{20, K, T, A},
+    kmer_array::KmerArray{20, K},
     sequence::SeqOrView{AminoAcidAlphabet};
     reset::Bool = true,
-) where {K, T, A}
+) where K
     reset && VectorizedKmers.zeros!(kmer_array)
     mask = UInt(20^K)
     kmer = UInt(0)
