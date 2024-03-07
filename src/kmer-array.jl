@@ -1,7 +1,6 @@
 import StaticArraysCore: StaticArray
 
 ktuple(N::T, K::Int) where T = NTuple{K, T}(N for _ in 1:K)
-hypercubify(A::AbstractArray, N::Int, K::Int) = reshape(A, ktuple(N, K))
 
 """
     KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: StaticArray{NTuple{K, N}, T, K}
@@ -16,13 +15,13 @@ struct KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: StaticArray{NTupl
 
     function KmerArray{N, K, T, A}(values::A) where {N, K, T <: Real, A <: AbstractArray{T, K}}
         size(values) == ktuple(N, K) || throw(ArgumentError("size(values) must be $(ktuple(N, K))"))
-        axes(values) == ktuple(1:N, K) || throw(ArgumentError("axes(values) must be not be offset"))
+        axes(values) == ktuple(1:N, K) || throw(ArgumentError("axes(values) must not be offset"))
         return new{N, K, T, A}(values)
     end
 end
 
 KmerArray{N, K}(values::A) where {N, K, T <: Real, A <: AbstractArray{T, K}} = KmerArray{N, K, T, A}(values)
-KmerArray{N, K}(values::AbstractArray) where {N, K} = KmerArray{N, K}(hypercubify(values, N, K))
+KmerArray{N, K}(values::AbstractArray) where {N, K} = KmerArray{N, K}(reshape(values, ktuple(N, K)))
 KmerArray{N}(values::AbstractArray) where N = KmerArray{N, Int(log(N, length(values)))}(values)
 
 KmerArray(values::AbstractArray) = KmerArray{size(values, 1), ndims(values)}(values)
