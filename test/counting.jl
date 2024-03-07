@@ -10,6 +10,6 @@
         @test count_kmers([2, 0, 3, 3, 0, 1, 0], 4, 1) == KmerArray([3, 1, 1, 2])
     end
 
-    @test_throws ErrorException VectorizedKmers.alphabet_size(String)
+    @test_throws ErrorException VectorizedKmers.default_alphabet_size(String)
 
 end

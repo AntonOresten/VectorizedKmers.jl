@@ -4,14 +4,11 @@ using VectorizedKmers, BioSequences
 
 import BioSequences: SeqOrView
 
-Base.to_index(::KmerArray{4}, kmer::SeqOrView{<:NucleicAcidAlphabet{2}}) = reverse(kmer).data[1]
-Base.to_index(::KmerArray{4}, kmer::SeqOrView{<:NucleicAcidAlphabet{4}}) = [trailing_zeros(reinterpret(Int8, nuc)) for nuc in kmer]
-Base.to_index(::KmerArray{20}, kmer::SeqOrView{AminoAcidAlphabet}) = [(reinterpret(Int8, aa) - 1) % 20 + 1 for aa in kmer]
+VectorizedKmers.axis_index(::KmerArray{4}, m::NucleicAcid) = trailing_zeros(reinterpret(Int8, m))
+VectorizedKmers.axis_index(::KmerArray{20}, m::AminoAcid) = (reinterpret(Int8, m) - 1) % 20 + 1
 
-Base.getindex(ka::KmerArray, kmer::SeqOrView) = ka[Base.to_index(ka, kmer)]
-
-VectorizedKmers.alphabet_size(::Type{<:SeqOrView{<:NucleicAcidAlphabet}}) = 4
-VectorizedKmers.alphabet_size(::Type{<:SeqOrView{AminoAcidAlphabet}}) = 20
+VectorizedKmers.default_alphabet_size(::Type{<:NucleicAcid}) = 4
+VectorizedKmers.default_alphabet_size(::Type{AminoAcid}) = 20
 
 function VectorizedKmers.count_kmers!(
     kmer_array::KmerArray{4, K, T, A},
@@ -53,7 +50,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)
-            kmer_array[kmer] += first_count_index <= i
+            kmer_array.offset_values.parent[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array

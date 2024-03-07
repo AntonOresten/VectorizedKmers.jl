@@ -5,14 +5,15 @@ function count_kmers! end
 
 # primarily meant for testing purposes
 function count_kmers!(
-    kmer_array::KmerArray{N, K}, seq::Vector{Int};
+    kmer_array::KmerArray{N, K}, seq;
     reset::Bool = true,
 ) where {N, K}
-    0 <= maximum(seq) < N || throw(ArgumentError("seq contains elements outside the range 0:N-1"))
     reset && zeros!(kmer_array)
-    for i in 1:length(seq) - K + 1
-        kmer = @view seq[i:i+K-1]
-        kmer_array[kmer] += 1
+    mask = N^K
+    kmer = zero(UInt)
+    for (i, m) in enumerate(seq)
+        kmer = kmer * N % mask + axis_index(kmer_array, m)
+        kmer_array[kmer] += K <= i
     end
     return kmer_array
 end
@@ -23,8 +24,4 @@ end
 function count_kmers end
 
 count_kmers(seq, N::Integer, K::Integer, T::Type{<:Real}=Int, zeros=zeros) = count_kmers!(KmerArray(N, K, T, zeros), seq; reset=false)
-
-alphabet_size(T::Type) = error("$(T) does not have a defined alphabet size. Please define `alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
-alphabet_size(::T) where T = alphabet_size(T)
-
-count_kmers(seq, K::Integer, T::Type{<:Real}=Int, zeros=zeros) = count_kmers(seq, alphabet_size(seq), K, T, zeros)
+count_kmers(seq, K::Integer, T::Type{<:Real}=Int, zeros=zeros) = count_kmers(seq, default_alphabet_size(eltype(seq)), K, T, zeros)

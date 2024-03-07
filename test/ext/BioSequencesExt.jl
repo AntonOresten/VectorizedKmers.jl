@@ -32,7 +32,7 @@ using BioSequences
         @test values(count_kmers!(KmerArray{4, 5}(falses(4^5)), view(seq, 1:50))) == values(count_kmers(seq[1:50], 5)) .% 2
 
         aa_seq = randaaseq(48)*aa"AY"
-        @test all([count_kmers(aa_seq[i:j], 2) == count_kmers(view(aa_seq, i:j), 2) for i in 1:50, j in 1:50])
+        @test all(count_kmers(aa_seq[i:j], 2) == count_kmers(view(aa_seq, i:j), 2) for i in 1:50, j in 1:50)
         @test count_kmers(aa_seq, 2)[aa"AY"] >= 1
 
     end
