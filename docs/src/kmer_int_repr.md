@@ -18,7 +18,7 @@ For DNA, each non-ambiguous nucleotide is assigned a number between 0 and 3:
 
 We could theoretically convert any DNA sequence to an integer, but 64-bit unsigned integers limit us to 32-mers.
 
-Consider the DNA sequence `GATTACA`. If we convert it to an integer using the table above, we get $2033010_4 = 10001111000100_2 = 9156_{10}$, so the integer value of `GATTACA` is 9156. Since Julia uses 1-based indexing, we would add 1 to this value to get the index of `GATTACA` in the vector.
+Consider the DNA sequence `GATTACA`. If we convert it to an integer using the table above, we get $2033010_4 = 10001111000100_2 = 9156_{10}$, so the integer value of `GATTACA` is 9156. Since Julia uses 1-based indexing, we would add 1 to this value to get the index for the value in a vector associated with `GATTACA`.
 
 Writing a function for this might look like the following:
 
@@ -53,52 +53,4 @@ julia> f("GATTACA")
 9156
 ```
 
-## Amino acid sequences
-
-Amino acid sequences are a little more difficult to deal with since we have multiple reading frames, and since the alphabet is much larger, the vectors grow in size much quicker as $k$ increases. However, we can still represent them as integers, like we did with DNA in the form of Strings, just without the fancy-looking bit-manipulation.
-
-BioSequences.jl has 28 amino acids in its AminoAcidAlphabet, so we can represent each amino acid as an integer between 0 and 27.
-
-```jldoctest
-julia> using BioSequences
-
-julia> length(AminoAcidAlphabet())
-28
-```
-
-The AminoAcidAlphabet consists of amino acids with 8 bits each, so we can reinterpret them as 8-bit integers.
-
-```jldoctest
-julia> reinterpret.(Int8, [AA_A, AA_M, AA_I, AA_N, AA_O])
-5-element Vector{Int8}:
-  0
- 12
-  9
-  2
- 20
-```
-
-Let's say we want to convert the amino acid sequence `AMINO` to an integer. As seen above, the amino acids in the sequence have values of `0`, `12`, `9`, `2`, and `20` respectively. Thus, the integer value of the k-mer should be:
-
-$$
-0 \cdot 28^4 + 12 \cdot 28^3 + 9 \cdot 28^2 + 2 \cdot 28^1 + 20 \cdot 28^0 = 270556
-$$
-
-We can write a function for this:
-
-```jldoctest
-julia> function kmer_to_int(kmer::LongAA)
-           kmer_int = zero(UInt)
-           for aa in kmer
-               kmer_int = kmer_int * 28 + reinterpret(UInt8, aa)
-           end
-           kmer_int
-       end
-```
-
-To test it, we can use the `aa"..."` string macro to create a `LongAA` instance:
-
-```jldoctest
-julia> kmer_to_int(aa"AMINO")
-270556
-```
+This package does not use vectors for this, but rather K-dimensional arrays, with each dimension having a size of 4, or whatever else the alphabet size might be. Linear indexing of these arrays is still possible, and they can be lazily reshaped to vectors.
