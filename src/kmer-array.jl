@@ -2,7 +2,6 @@ import StaticArraysCore: StaticArray
 
 ktuple(N::T, K::Int) where T = NTuple{K, T}(N for _ in 1:K)
 hypercubify(A::AbstractArray, N::Int, K::Int) = reshape(A, ktuple(N, K))
-offset_axes(N::Int, K::Int) = ktuple(0:N-1, K)
 
 """
     KmerArray{N, K, T <: Real, A <: AbstractArray{T, K}} <: StaticArray{NTuple{K, N}, T, K}
@@ -33,22 +32,23 @@ KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros::Function=zeros) = KmerArra
 
 @inline Base.size(::KmerArray{N, K}) where {N, K} = ktuple(N, K)
 @inline Base.length(::KmerArray{N, K}) where {N, K} = N^K
-@inline Base.axes(::KmerArray{N, K}) where {N, K} = offset_axes(N, K)
+@inline Base.axes(::KmerArray{N, K}) where {N, K} = ktuple(0:N-1, K)
 
 @inline axis_index(::KmerArray, m::Integer) = m
 @inline deconstruct(ka::KmerArray{N}, kmer) where N = (axis_index(ka, m) for m in Iterators.reverse(kmer))
 
 @inline Base.getindex(ka::KmerArray, kmer::Integer) = ka.values[kmer + 1]
-@inline Base.getindex(ka::KmerArray{N, K}, axis_indices::Vararg{Int, K}) where {N, K} = ka.values[(axis_indices .+ 1)...]
+@inline Base.getindex(ka::KmerArray{N, K}, axis_indices::Vararg{Integer, K}) where {N, K} = ka.values[(axis_indices .+ 1)...]
 @inline Base.getindex(ka::KmerArray{N, K}, axis_indices::CartesianIndex{K}) where {N, K} = ka[Tuple(axis_indices)...]
 @inline Base.getindex(ka::KmerArray, kmer) = ka[deconstruct(ka, kmer)...]
 
 @inline Base.setindex!(ka::KmerArray, v, kmer::Integer) = (ka.values[kmer + 1] = v)
-@inline Base.setindex!(ka::KmerArray{N, K}, v, axis_indices::Vararg{Int, K}) where {N, K} = (ka.values[(axis_indices .+ 1)...] = v)
+@inline Base.setindex!(ka::KmerArray{N, K}, v, axis_indices::Vararg{Integer, K}) where {N, K} = (ka.values[(axis_indices .+ 1)...] = v)
 @inline Base.setindex!(ka::KmerArray{N, K}, v, axis_indices::CartesianIndex{K}) where {N, K} = (ka[Tuple(axis_indices)...] = v)
 @inline Base.setindex!(ka::KmerArray, v, kmer) = (ka[deconstruct(ka, kmer)...] = v)
 
-Base.similar(ka::KmerArray, ::Type{T}=eltype(ka), dims::Dims=size(ka)) where T = KmerArray(similar(ka.values, T, dims))
+# this changes the behavior of copy(ka) to return a KmerArray
+#Base.similar(ka::KmerArray, ::Type{T}=eltype(ka), dims::Dims=size(ka)) where T = KmerArray(similar(ka.values, T, dims))
 
 Base.show(io::IO, ka::KmerArray) = print(io, "$(typeof(ka)) with size $(size(ka))")
 Base.show(io::IO, ::MIME"text/plain", ka::KmerArray) = show(io, ka)
