@@ -50,7 +50,6 @@ julia> count_kmers(aa"AY", 1) |> values
  1
  0
 ```
-For more examples, including some technical stuff, see the [documentation](https://anton083.github.io/VectorizedKmers.jl/stable/).
 
 ## Limitations
 
