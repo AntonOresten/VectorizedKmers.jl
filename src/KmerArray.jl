@@ -46,13 +46,9 @@ KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros::Function=zeros) = KmerArra
 @inline Base.setindex!(ka::KmerArray{N, K}, v, axis_indices::CartesianIndex{K}) where {N, K} = (ka[Tuple(axis_indices)...] = v)
 @inline Base.setindex!(ka::KmerArray, v, kmer) = (ka[deconstruct(ka, kmer)...] = v)
 
-# this changes the behavior of copy(ka) to return a KmerArray
-#Base.similar(ka::KmerArray, ::Type{T}=eltype(ka), dims::Dims=size(ka)) where T = KmerArray(similar(ka.values, T, dims))
-
 Base.show(io::IO, ka::KmerArray) = print(io, "$(typeof(ka)) with size $(size(ka))")
 Base.show(io::IO, ::MIME"text/plain", ka::KmerArray) = show(io, ka)
 
 zeros!(ka::KmerArray) = fill!(ka.values, zero(eltype(ka)))
 
 default_alphabet_size(::Type{T}) where T = error("$(T) does not have a defined alphabet size. Please define `default_alphabet_size(::Type{<:$(T)})` or insert the alphabet size as a second argument in the `count_kmers` function call.")
-default_alphabet_size(::T) where T = default_alphabet_size(T)
