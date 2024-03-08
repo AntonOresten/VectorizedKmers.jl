@@ -3,8 +3,8 @@ using Test
 
 @testset "VectorizedKmers.jl" begin
 
-    include("kmer-array.jl")
-    include("counting.jl")
+    include("KmerArray.jl")
+    include("count.jl")
 
     @testset "extensions" begin
         include("ext/BioSequencesExt.jl")

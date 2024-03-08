@@ -1,4 +1,4 @@
-@testset "counting.jl" begin
+@testset "count.jl" begin
 
     @testset "count_kmers!" begin
         kv = KmerArray(4, 1)
@@ -7,7 +7,7 @@
     end
 
     @testset "count_kmers" begin
-        @test count_kmers([2, 0, 3, 3, 0, 1, 0], 4, 1) == KmerArray([3, 1, 1, 2])
+        @test count_kmers([2, 0, 3, 3, 0, 1, 0], 1, N=4) == KmerArray([3, 1, 1, 2])
     end
 
     @test_throws ErrorException VectorizedKmers.default_alphabet_size(String)

@@ -1,4 +1,4 @@
-@testset "kmer-array.jl" begin
+@testset "KmerArray.jl" begin
 
     @testset "KmerArray" begin
         ka = KmerArray{4, 1}([2, 1, 1, 2])
