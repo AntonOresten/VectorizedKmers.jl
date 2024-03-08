@@ -22,10 +22,11 @@ end
 
 KmerArray{N, K}(values::A) where {N, K, T <: Real, A <: AbstractArray{T, K}} = KmerArray{N, K, T, A}(values)
 KmerArray{N, K}(values::AbstractArray) where {N, K} = KmerArray{N, K}(reshape(values, ktuple(N, K)))
+KmerArray{N, K}(T::Type{<:Real}=Int, zeros=zeros) where {N, K} = KmerArray{N, K}(zeros(T, ktuple(N, K)))
 KmerArray{N}(values::AbstractArray) where N = KmerArray{N, Int(log(N, length(values)))}(values)
 
 KmerArray(values::AbstractArray) = KmerArray{size(values, 1), ndims(values)}(values)
-KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros::Function=zeros) = KmerArray{N, K}(zeros(T, ktuple(N, K)))
+KmerArray(N::Int, K::Int, T::Type{<:Real}=Int, zeros=zeros) = KmerArray{N, K}(T, zeros)
 
 @inline Base.values(ka::KmerArray) = ka.values
 

@@ -10,6 +10,9 @@
         @test ka[0] == 3
         @test repr(ka) == "KmerArray{4, 1, Int64, Vector{Int64}} with size (4,)"
 
+        @test KmerArray(4, 3) == KmerArray{4, 3}()
+        @test KmerArray{4}(zeros(4^3)) == KmerArray{4, 3}()
+
         ka = KmerArray(4, 2)
         @test values(ka) == zeros(Int, 4, 4)
 
