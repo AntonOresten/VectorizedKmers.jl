@@ -16,8 +16,8 @@ function count_kmers!(kmer_array::KmerArray{N, K}, sequence; reset::Bool = true)
 end
 
 """
-    count_kmers(sequence, K, T=Int, zeros=zeros; N=default_alphabet_size(eltype(sequence)))
+    count_kmers(sequence, [N,] K, T=Int, zeros=zeros)
 """
-function count_kmers(sequence, K::Integer, T::Type{<:Real}=Int, zeros=zeros; N::Integer = default_alphabet_size(eltype(sequence)))
-    return count_kmers!(KmerArray(N, K, T, zeros), sequence; reset=false)
-end
+count_kmers(sequence, ::Val{N}, ::Val{K}, T::Type{<:Real}=Int, zeros=zeros) where {N, K} = count_kmers!(KmerArray(N, K, T, zeros), sequence)
+count_kmers(sequence, N::Integer, K::Integer, args...) = count_kmers(sequence, Val(N), Val(K), args...)
+count_kmers(sequence, K::Integer, args...) = count_kmers(sequence, default_alphabet_size(eltype(sequence)), K, args...)
