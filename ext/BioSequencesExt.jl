@@ -16,6 +16,7 @@ function VectorizedKmers.count_kmers!(
     reset::Bool = true,
 ) where K
     reset && VectorizedKmers.zeros!(kmer_array)
+    kmer_array_values = kmer_array.values
     mask = one(UInt) << 2K - 1
     kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
@@ -27,7 +28,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | ((data_int >> j) & 0b11)
-            kmer_array[kmer] += first_count_index <= i
+            kmer_array_values[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
@@ -39,6 +40,7 @@ function VectorizedKmers.count_kmers!(
     reset::Bool = true,
 ) where K
     reset && VectorizedKmers.zeros!(kmer_array)
+    kmer_array_values = kmer_array.values
     mask = one(UInt) << 2K - 1
     kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
@@ -50,7 +52,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = ((kmer << 2) & mask) | (trailing_zeros(data_int >> j) & 0b11)
-            kmer_array[kmer] += first_count_index <= i
+            kmer_array_values[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
@@ -62,6 +64,7 @@ function VectorizedKmers.count_kmers!(
     reset::Bool = true,
 ) where K
     reset && VectorizedKmers.zeros!(kmer_array)
+    kmer_array_values = kmer_array.values
     mask = UInt(20^K)
     kmer = UInt(0)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
@@ -73,7 +76,7 @@ function VectorizedKmers.count_kmers!(
             i += 1
             i > stop && break
             kmer = (kmer * 20 + ((data_int >> j) & 0xff) % 20) % mask
-            kmer_array[kmer] += first_count_index <= i
+            kmer_array_values[kmer + 1] += first_count_index <= i
         end
     end
     return kmer_array
