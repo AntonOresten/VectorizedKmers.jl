@@ -1,7 +1,7 @@
 name = "VectorizedKmers"
 uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
 authors = ["Anton Oresten <anton.oresten42@gmail.com>"]
-version = "0.9.1"
+version = "0.9.2"
 
 [deps]
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
