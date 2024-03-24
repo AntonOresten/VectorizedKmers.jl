@@ -65,8 +65,8 @@ function VectorizedKmers.count_kmers!(
 ) where K
     reset && VectorizedKmers.zeros!(kmer_array)
     kmer_array_values = kmer_array.values
-    mask = UInt(20^K)
-    kmer = UInt(0)
+    mask = UInt(20)^K
+    kmer = zero(UInt)
     start, stop = sequence isa LongSubSeq ? (sequence.part.start, sequence.part.stop) : (1, length(sequence))
     data_start, data_stop = cld(start, 8), cld(stop, 8)
     first_count_index = K + start - 1

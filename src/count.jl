@@ -6,7 +6,7 @@ Requires method `axis_index(::KmerArray{N}, ::eltype(sequence)) where N` to be d
 function count_kmers!(kmer_array::KmerArray{N, K}, sequence; reset::Bool = true) where {N, K}
     reset && zeros!(kmer_array)
     kmer_array_values = kmer_array.values
-    mask = N^K
+    mask = UInt(N)^K
     kmer = zero(UInt)
     for (i, m) in enumerate(sequence)
         kmer = (kmer * N + axis_index(kmer_array, m)) % mask
