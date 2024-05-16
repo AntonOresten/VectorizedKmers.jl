@@ -16,34 +16,22 @@ This data structure can be used to quickly approximate distances between sequenc
 ```julia
 julia> using VectorizedKmers, BioSequences
 
-julia> kmer_array = count_kmers(dna"ACCGGGTTTT", 1)
-KmerArray{4, 1, Int64, Vector{Int64}} with size (4,)
+julia> kmer_array = count_kmers(dna"AACCGGTT", 2)
+KmerArray{4, 2, Int64, Matrix{Int64}} with size (4, 4)
 
 julia> kmer_array |> values
-4-element Vector{Int64}:
- 1
- 2
- 3
- 4
-
-julia> count_kmers(dna"AATT", 2) |> values # 2-mers of AATT
 4×4 Matrix{Int64}:
  1  0  0  0
- 0  0  0  0
- 0  0  0  0
- 1  0  0  1
+ 1  1  0  0
+ 0  1  1  0
+ 0  0  1  1
 
-julia> count_kmers(aa"AY", 1) |> values
-20-element Vector{Int64}:
- 1
- 0
- 0
- ⋮
- 0
- 1
- 0
+julia> kmer_array[dna"AC"]
+1
+
+julia> kmer_array[dna"CA"]
+0
 ```
-For more examples, see the [documentation](https://anton083.github.io/VectorizedKmers.jl/stable/).
 
 ## Limitations
 
