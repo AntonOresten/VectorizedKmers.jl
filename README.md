@@ -1,11 +1,11 @@
 # <img width="25%" src="./docs/src/assets/logo.png" align="right" /> VectorizedKmers
 
-[![Latest Release](https://img.shields.io/github/release/anton083/VectorizedKmers.jl.svg)](https://github.com/anton083/VectorizedKmers.jl/releases/latest)
+[![Latest Release](https://img.shields.io/github/release/AntonOresten/VectorizedKmers.jl.svg)](https://github.com/AntonOresten/VectorizedKmers.jl/releases/latest)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/license/MIT)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://anton083.github.io/VectorizedKmers.jl/stable/)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://anton083.github.io/VectorizedKmers.jl/dev/)
-[![Status](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/anton083/VectorizedKmers.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/anton083/VectorizedKmers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/anton083/VectorizedKmers.jl)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://AntonOresten.github.io/VectorizedKmers.jl/stable/)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://AntonOresten.github.io/VectorizedKmers.jl/dev/)
+[![Status](https://github.com/AntonOresten/VectorizedKmers.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/AntonOresten/VectorizedKmers.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/AntonOresten/VectorizedKmers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/AntonOresten/VectorizedKmers.jl)
 
 VectorizedKmers.jl is a Julia package primarily designed for fast $K$-mer counting of biological sequences. The core idea is that $K$-mers with an alphabet size of $N$ are essentially integers in base $N$, and can be used as indices in a vector of size $N^K$ to count the corresponding $K$-mers.
 
